@@ -4,14 +4,15 @@ import { Response, SuperTest, Test } from 'supertest';
 
 import { pErr } from '@shared/functions';
 import { paramMissingError } from '@shared/constants';
-import CarService from 'src/server/controllers/api/cars/service';
-import server from '@server';
 
-describe('Cars Routes', () => {
-    const carsPath = '/api/cars';
-    const addcarsPath = `${carsPath}`;
-    const updateCarPath = `${carsPath}/:id`;
-    const deleteCarPath = `${carsPath}/:id`;
+import server from '@server';
+import AuthorService from '@api/authors/service';
+
+describe('Authors Routes', () => {
+    const authorsPath = '/api/authors';
+    const addAuthorsPath = `${authorsPath}`;
+    const updateAuthorPath = `${authorsPath}/:id`;
+    const deleteAuthorPath = `${authorsPath}/:id`;
 
     let agent: SuperTest<Test>;
 
@@ -23,22 +24,23 @@ describe('Cars Routes', () => {
         });
     });
 
-    describe(`"GET:${carsPath}"`, () => {
-        const cars = [
+    describe(`"GET:${authorsPath}"`, () => {
+        const authors = [
             {
-                id: 1,
-                model: 'Scirocco',
-                make: 'Volkswagen',
-                model_year: 1988,
+                id: '12345',
+                name: 'Test Author',
+                avatar_url: 'test-url',
+                description: 'This is a test description.',
+                created_at: 'some time zone',
             },
         ];
-        it(`should return a JSON object with all the cars and a status code of "${OK}" if the
+        it(`should return a JSON object with all the authors and a status code of "${OK}" if the
             request was successful.`, (done) => {
-            spyOn(CarService.prototype, 'findMany').and.resolveTo(cars);
-            agent.get(carsPath).end((err: Error, res: Response) => {
+            spyOn(AuthorService.prototype, 'findMany').and.resolveTo(authors);
+            agent.get(authorsPath).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
-                expect(res.body).toEqual(cars);
+                expect(res.body).toEqual(authors);
                 expect(res.body.error).toBeUndefined();
                 done();
             });
@@ -46,10 +48,10 @@ describe('Cars Routes', () => {
 
         it(`should return a JSON object containing an error message and a status code of
             "${BAD_REQUEST}" if the request was unsuccessful.`, (done) => {
-            const errMsg = 'Could not fetch cars.';
-            spyOn(CarService.prototype, 'findMany').and.throwError(errMsg);
+            const errMsg = 'Could not fetch authors.';
+            spyOn(AuthorService.prototype, 'findMany').and.throwError(errMsg);
 
-            agent.get(carsPath).end((err: Error, res: Response) => {
+            agent.get(authorsPath).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -58,37 +60,38 @@ describe('Cars Routes', () => {
         });
     });
 
-    describe(`"POST:${addcarsPath}"`, () => {
+    describe(`"POST:${addAuthorsPath}"`, () => {
         const callApi = (reqBody: Record<string, unknown>) => {
-            return agent.post(addcarsPath).type('form').send(reqBody);
+            return agent.post(addAuthorsPath).type('form').send(reqBody);
         };
 
         const body = {
-            car: {
-                model: 'Scirocco',
-                make: 'Volkswagen',
-                model_year: 1988,
+            author: {
+                name: 'Test Author',
+                avatar_url: 'test-url',
+                description: 'This is a test description.',
             },
         };
 
         it(`should return a status code of "${CREATED}" if the request was successful.`, (done) => {
-            const keys = Object.keys(body.car) as Array<
-                keyof typeof body['car']
+            const keys = Object.keys(body.author) as Array<
+                keyof typeof body['author']
             >;
-            spyOn(CarService.prototype, 'createOne').and.resolveTo({
-                ...body.car,
-                id: 1,
+            spyOn(AuthorService.prototype, 'createOne').and.resolveTo({
+                ...body.author,
+                id: '12345',
+                created_at: 'some time',
             });
 
             agent
-                .post(addcarsPath)
+                .post(addAuthorsPath)
                 .type('form')
                 .send(body) // pick up here
                 .end((err: Error, res: Response) => {
                     pErr(err);
                     expect(res.status).toBe(CREATED);
                     keys.forEach((key) => {
-                        expect(body.car[key]).toBe(res.body[key]);
+                        expect(body.author[key]).toBe(res.body[key]);
                     });
                     expect(res.body.error).toBeUndefined();
                     done();
@@ -96,7 +99,7 @@ describe('Cars Routes', () => {
         });
 
         it(`should return a JSON Record<string, unknown> with an error message of "${paramMissingError}" and a status
-            code of "${BAD_REQUEST}" if the car param was missing.`, (done) => {
+            code of "${BAD_REQUEST}" if the author param was missing.`, (done) => {
             callApi({}).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
@@ -107,8 +110,8 @@ describe('Cars Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const errMsg = 'Could not add car.';
-            spyOn(CarService.prototype, 'createOne').and.throwError(errMsg);
+            const errMsg = 'Could not add author.';
+            spyOn(AuthorService.prototype, 'createOne').and.throwError(errMsg);
 
             callApi(body).end((err: Error, res: Response) => {
                 pErr(err);
@@ -119,38 +122,41 @@ describe('Cars Routes', () => {
         });
     });
 
-    describe(`"PUT:${updateCarPath}"`, () => {
-        const callApi = (id: number, reqBody: Record<string, unknown>) => {
+    describe(`"PUT:${updateAuthorPath}"`, () => {
+        const callApi = (id: string, reqBody: Record<string, unknown>) => {
             return agent
-                .put(updateCarPath.replace(':id', id.toString()))
+                .put(updateAuthorPath.replace(':id', id.toString()))
                 .type('form')
                 .send(reqBody);
         };
 
         const body = {
-            car: {
-                id: 10,
-                model: 'Scirocco',
-                make: 'Volkswagen',
-                model_year: 1988,
+            author: {
+                id: '12345',
+                name: 'Test Author',
+                avatar_url: 'test-url',
+                description: 'This is a test description.',
+                created_at: 'some time zone',
             },
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
-            spyOn(CarService.prototype, 'updateOne').and.resolveTo(body.car);
+            spyOn(AuthorService.prototype, 'updateOne').and.resolveTo(
+                body.author
+            );
 
-            callApi(body.car.id, body).end((err: Error, res: Response) => {
+            callApi(body.author.id, body).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
-                expect(res.body).toEqual(body.car);
+                expect(res.body).toEqual(body.author);
                 expect(res.body.error).toBeUndefined();
                 done();
             });
         });
 
         it(`should return a JSON object with an error message of "${paramMissingError}" and a
-            status code of "${BAD_REQUEST}" if the car param was missing.`, (done) => {
-            callApi(body.car.id, {}).end((err: Error, res: Response) => {
+            status code of "${BAD_REQUEST}" if the author param was missing.`, (done) => {
+            callApi(body.author.id, {}).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -160,12 +166,12 @@ describe('Cars Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const updateErrMsg = 'Could not update car.';
-            spyOn(CarService.prototype, 'updateOne').and.throwError(
+            const updateErrMsg = 'Could not update author.';
+            spyOn(AuthorService.prototype, 'updateOne').and.throwError(
                 updateErrMsg
             );
 
-            callApi(body.car.id, body).end((err: Error, res: Response) => {
+            callApi(body.author.id, body).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(updateErrMsg);
@@ -174,15 +180,15 @@ describe('Cars Routes', () => {
         });
     });
 
-    describe(`"DELETE:${deleteCarPath}"`, () => {
-        const callApi = (id: number) => {
-            return agent.delete(deleteCarPath.replace(':id', id.toString()));
+    describe(`"DELETE:${deleteAuthorPath}"`, () => {
+        const callApi = (id: string) => {
+            return agent.delete(deleteAuthorPath.replace(':id', id.toString()));
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
-            spyOn(CarService.prototype, 'deleteOne').and.resolveTo();
+            spyOn(AuthorService.prototype, 'deleteOne').and.resolveTo();
 
-            callApi(5).end((err: Error, res: Response) => {
+            callApi('5').end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body.error).toBeUndefined();
@@ -192,12 +198,12 @@ describe('Cars Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const deleteErrMsg = 'Could not delete car.';
-            spyOn(CarService.prototype, 'deleteOne').and.throwError(
+            const deleteErrMsg = 'Could not delete author.';
+            spyOn(AuthorService.prototype, 'deleteOne').and.throwError(
                 deleteErrMsg
             );
 
-            callApi(1).end((err: Error, res: Response) => {
+            callApi('1').end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(deleteErrMsg);

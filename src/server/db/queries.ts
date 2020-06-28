@@ -16,7 +16,8 @@ export default [
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         name varchar(255) NOT NULL,
         avatar_url text NOT NULL,
-        description text NOT NULL
+        description text NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT Now()
     )`,
 
     // Create posts table

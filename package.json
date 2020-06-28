@@ -33,6 +33,7 @@
         "@entities": "dist/entities",
         "@lib": "dist/lib",
         "@shared": "dist/shared",
+        "@api": "dist/controllers/api",
         "@server": "dist/Server"
     },
     "husky": {

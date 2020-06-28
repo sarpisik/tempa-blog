@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import CarController from './cars/controller';
-import CarService from './cars/service';
+import AuthorController from './authors/controller';
+import AuthorService from './authors/service';
 
 export default function generateApiControllers(
-    db: ConstructorParameters<typeof CarService>[0]
+    db: ConstructorParameters<typeof AuthorService>[0]
 ) {
-    return [new CarController(Router, new CarService(db))];
+    return [new AuthorController(Router, new AuthorService(db))];
 }

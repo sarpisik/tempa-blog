@@ -17,6 +17,7 @@
             "@entities/*": ["src/server/entities/*"],
             "@lib/*": ["src/server/lib/*"],
             "@shared/*": ["src/server/shared/*"],
+            "@api/*": ["src/server/controllers/api/*"],
             "@server": ["src/server/Server"]
         },
         "types": ["node"],
