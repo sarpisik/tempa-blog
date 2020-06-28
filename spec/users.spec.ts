@@ -6,14 +6,14 @@ import { pErr } from '@shared/functions';
 import { paramMissingError } from '@shared/constants';
 
 import server from '@server';
-import AuthorService from '@api/authors/service';
-import { IAuthor } from '@api/authors/interface';
+import UserService from '@api/users/service';
+import { IUser } from '@api/users/interface';
 
-describe('Authors Routes', () => {
-    const authorsPath = '/api/authors';
-    const addAuthorsPath = `${authorsPath}`;
-    const updateAuthorPath = `${authorsPath}/:id`;
-    const deleteAuthorPath = `${authorsPath}/:id`;
+describe('Users Routes', () => {
+    const usersPath = '/api/users';
+    const addUsersPath = `${usersPath}`;
+    const updateUserPath = `${usersPath}/:id`;
+    const deleteUserPath = `${usersPath}/:id`;
 
     let agent: SuperTest<Test>;
 
@@ -25,23 +25,22 @@ describe('Authors Routes', () => {
         });
     });
 
-    describe(`"GET:${authorsPath}"`, () => {
-        const authors: IAuthor[] = [
+    describe(`"GET:${usersPath}"`, () => {
+        const users: IUser[] = [
             {
                 id: '12345',
-                name: 'Test Author',
-                avatar_url: 'test-url',
-                description: 'This is a test description.',
+                name: 'Test User',
+                email: 'test@example.com',
                 created_at: 'some time zone',
             },
         ];
-        it(`should return a JSON object with all the authors and a status code of "${OK}" if the
+        it(`should return a JSON object with all the users and a status code of "${OK}" if the
             request was successful.`, (done) => {
-            spyOn(AuthorService.prototype, 'findMany').and.resolveTo(authors);
-            agent.get(authorsPath).end((err: Error, res: Response) => {
+            spyOn(UserService.prototype, 'findMany').and.resolveTo(users);
+            agent.get(usersPath).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
-                expect(res.body).toEqual(authors);
+                expect(res.body).toEqual(users);
                 expect(res.body.error).toBeUndefined();
                 done();
             });
@@ -49,10 +48,10 @@ describe('Authors Routes', () => {
 
         it(`should return a JSON object containing an error message and a status code of
             "${BAD_REQUEST}" if the request was unsuccessful.`, (done) => {
-            const errMsg = 'Could not fetch authors.';
-            spyOn(AuthorService.prototype, 'findMany').and.throwError(errMsg);
+            const errMsg = 'Could not fetch users.';
+            spyOn(UserService.prototype, 'findMany').and.throwError(errMsg);
 
-            agent.get(authorsPath).end((err: Error, res: Response) => {
+            agent.get(usersPath).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -61,38 +60,34 @@ describe('Authors Routes', () => {
         });
     });
 
-    describe(`"POST:${addAuthorsPath}"`, () => {
+    describe(`"POST:${addUsersPath}"`, () => {
         const callApi = (reqBody: Record<string, unknown>) => {
-            return agent.post(addAuthorsPath).type('form').send(reqBody);
+            return agent.post(addUsersPath).type('form').send(reqBody);
         };
 
         const body = {
-            author: {
-                name: 'Test Author',
-                avatar_url: 'test-url',
-                description: 'This is a test description.',
-            },
+            user: { name: 'Test User', email: 'test@example.com' },
         };
 
         it(`should return a status code of "${CREATED}" if the request was successful.`, (done) => {
-            const keys = Object.keys(body.author) as Array<
-                keyof typeof body['author']
+            const keys = Object.keys(body.user) as Array<
+                keyof typeof body['user']
             >;
-            spyOn(AuthorService.prototype, 'createOne').and.resolveTo({
-                ...body.author,
+            spyOn(UserService.prototype, 'createOne').and.resolveTo({
+                ...body.user,
                 id: '12345',
                 created_at: 'some time',
             });
 
             agent
-                .post(addAuthorsPath)
+                .post(addUsersPath)
                 .type('form')
                 .send(body) // pick up here
                 .end((err: Error, res: Response) => {
                     pErr(err);
                     expect(res.status).toBe(CREATED);
                     keys.forEach((key) => {
-                        expect(body.author[key]).toBe(res.body[key]);
+                        expect(body.user[key]).toBe(res.body[key]);
                     });
                     expect(res.body.error).toBeUndefined();
                     done();
@@ -100,7 +95,7 @@ describe('Authors Routes', () => {
         });
 
         it(`should return a JSON Record<string, unknown> with an error message of "${paramMissingError}" and a status
-            code of "${BAD_REQUEST}" if the author param was missing.`, (done) => {
+            code of "${BAD_REQUEST}" if the user param was missing.`, (done) => {
             callApi({}).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
@@ -111,8 +106,8 @@ describe('Authors Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const errMsg = 'Could not add author.';
-            spyOn(AuthorService.prototype, 'createOne').and.throwError(errMsg);
+            const errMsg = 'Could not add user.';
+            spyOn(UserService.prototype, 'createOne').and.throwError(errMsg);
 
             callApi(body).end((err: Error, res: Response) => {
                 pErr(err);
@@ -123,41 +118,38 @@ describe('Authors Routes', () => {
         });
     });
 
-    describe(`"PUT:${updateAuthorPath}"`, () => {
+    describe(`"PUT:${updateUserPath}"`, () => {
         const callApi = (id: string, reqBody: Record<string, unknown>) => {
             return agent
-                .put(updateAuthorPath.replace(':id', id))
+                .put(updateUserPath.replace(':id', id))
                 .type('form')
                 .send(reqBody);
         };
 
-        const body: { author: IAuthor } = {
-            author: {
+        const body: { user: IUser } = {
+            user: {
                 id: '12345',
-                name: 'Test Author',
-                avatar_url: 'test-url',
-                description: 'This is a test description.',
+                name: 'Test User',
+                email: 'test@example.com',
                 created_at: 'some time zone',
             },
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
-            spyOn(AuthorService.prototype, 'updateOne').and.resolveTo(
-                body.author
-            );
+            spyOn(UserService.prototype, 'updateOne').and.resolveTo(body.user);
 
-            callApi(body.author.id, body).end((err: Error, res: Response) => {
+            callApi(body.user.id, body).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
-                expect(res.body).toEqual(body.author);
+                expect(res.body).toEqual(body.user);
                 expect(res.body.error).toBeUndefined();
                 done();
             });
         });
 
         it(`should return a JSON object with an error message of "${paramMissingError}" and a
-            status code of "${BAD_REQUEST}" if the author param was missing.`, (done) => {
-            callApi(body.author.id, {}).end((err: Error, res: Response) => {
+            status code of "${BAD_REQUEST}" if the user param was missing.`, (done) => {
+            callApi(body.user.id, {}).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -167,12 +159,12 @@ describe('Authors Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const updateErrMsg = 'Could not update author.';
-            spyOn(AuthorService.prototype, 'updateOne').and.throwError(
+            const updateErrMsg = 'Could not update user.';
+            spyOn(UserService.prototype, 'updateOne').and.throwError(
                 updateErrMsg
             );
 
-            callApi(body.author.id, body).end((err: Error, res: Response) => {
+            callApi(body.user.id, body).end((err: Error, res: Response) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(updateErrMsg);
@@ -181,13 +173,13 @@ describe('Authors Routes', () => {
         });
     });
 
-    describe(`"DELETE:${deleteAuthorPath}"`, () => {
+    describe(`"DELETE:${deleteUserPath}"`, () => {
         const callApi = (id: string) => {
-            return agent.delete(deleteAuthorPath.replace(':id', id));
+            return agent.delete(deleteUserPath.replace(':id', id));
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
-            spyOn(AuthorService.prototype, 'deleteOne').and.resolveTo();
+            spyOn(UserService.prototype, 'deleteOne').and.resolveTo();
 
             callApi('5').end((err: Error, res: Response) => {
                 pErr(err);
@@ -199,8 +191,8 @@ describe('Authors Routes', () => {
 
         it(`should return a JSON object with an error message and a status code of "${BAD_REQUEST}"
             if the request was unsuccessful.`, (done) => {
-            const deleteErrMsg = 'Could not delete author.';
-            spyOn(AuthorService.prototype, 'deleteOne').and.throwError(
+            const deleteErrMsg = 'Could not delete user.';
+            spyOn(UserService.prototype, 'deleteOne').and.throwError(
                 deleteErrMsg
             );
 
