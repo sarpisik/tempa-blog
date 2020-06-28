@@ -37,11 +37,11 @@ export default class CommentController extends Controller {
     >(async ({ body }, res) => {
         if (!body.comment) throw new BadRequestError();
 
-        const { user_id, post_id, content } = body.comment;
+        const { user_id, blog_id, content } = body.comment;
 
         const comment = await this._commentService.createOne(
             user_id,
-            post_id,
+            blog_id,
             content
         );
 
