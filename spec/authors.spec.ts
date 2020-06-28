@@ -7,6 +7,7 @@ import { paramMissingError } from '@shared/constants';
 
 import server from '@server';
 import AuthorService from '@api/authors/service';
+import { IAuthor } from '@api/authors/interface';
 
 describe('Authors Routes', () => {
     const authorsPath = '/api/authors';
@@ -25,7 +26,7 @@ describe('Authors Routes', () => {
     });
 
     describe(`"GET:${authorsPath}"`, () => {
-        const authors = [
+        const authors: IAuthor[] = [
             {
                 id: '12345',
                 name: 'Test Author',
@@ -125,12 +126,12 @@ describe('Authors Routes', () => {
     describe(`"PUT:${updateAuthorPath}"`, () => {
         const callApi = (id: string, reqBody: Record<string, unknown>) => {
             return agent
-                .put(updateAuthorPath.replace(':id', id.toString()))
+                .put(updateAuthorPath.replace(':id', id))
                 .type('form')
                 .send(reqBody);
         };
 
-        const body = {
+        const body: { author: IAuthor } = {
             author: {
                 id: '12345',
                 name: 'Test Author',
@@ -182,7 +183,7 @@ describe('Authors Routes', () => {
 
     describe(`"DELETE:${deleteAuthorPath}"`, () => {
         const callApi = (id: string) => {
-            return agent.delete(deleteAuthorPath.replace(':id', id.toString()));
+            return agent.delete(deleteAuthorPath.replace(':id', id));
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
