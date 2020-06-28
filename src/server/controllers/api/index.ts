@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { AuthorController, AuthorService } from './authors';
 import { BlogController, BlogService } from './blogs';
+import { UserController, UserService } from './users';
 
 export default function generateApiControllers(
     db: ConstructorParameters<typeof AuthorService>[0]
@@ -8,5 +9,6 @@ export default function generateApiControllers(
     return [
         new AuthorController(Router, new AuthorService(db)),
         new BlogController(Router, new BlogService(db)),
+        new UserController(Router, new UserService(db)),
     ];
 }
