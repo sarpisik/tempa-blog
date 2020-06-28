@@ -41,7 +41,7 @@ export default [
     `CREATE TABLE IF NOT EXISTS comments (
         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         created_at TIMESTAMPTZ DEFAULT Now(),
-        user_id UUID REFERENCES userss(id) ON DELETE CASCADE,
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
         blog_id UUID REFERENCES blogs(id) ON DELETE CASCADE,
         content text NOT NULL
     )`,
