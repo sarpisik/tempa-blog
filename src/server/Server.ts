@@ -16,11 +16,10 @@ import database from './db/database';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isProd = process.env.NODE_ENV === 'production';
-const isTest = process.env.NODE_ENV === 'testing';
 
 export default async function server() {
     // Connect database if we are not testing.
-    const db = !isTest ? await database() : (null as any);
+    const db = await database();
 
     // Init express
     const app = express();
