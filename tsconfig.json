@@ -18,7 +18,8 @@
             "@lib/*": ["src/server/lib/*"],
             "@shared/*": ["src/server/shared/*"],
             "@api/*": ["src/server/controllers/api/*"],
-            "@server": ["src/server/Server"]
+            "@server": ["src/server/Server"],
+            "@db/*": ["src/server/db/*"]
         },
         "types": ["node"],
         "typeRoots": ["node_modules/@types"]

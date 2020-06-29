@@ -2,7 +2,7 @@ import { Pool, PoolClient } from 'pg';
 import * as queries from './queries';
 import { env } from '../LoadEnv';
 
-const pool = new Pool({
+export const pool = new Pool({
     user: env.POSTGRES_USER,
     host: env.POSTGRES_HOST,
     database: env.POSTGRES_DB,
