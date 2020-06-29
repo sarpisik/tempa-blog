@@ -19,13 +19,13 @@ export default class UserController extends Controller {
     }
 
     private _initializeRoutes = () => {
-        this.router.get(this.path, this._getAllUsers);
+        this.router.get(this.path, this._getUsers);
         this.router.post(this.path, this._createUser);
         this.router.put(this.path + '/:id', this._updateUser);
         this.router.delete(this.path + '/:id', this._deleteUser);
     };
 
-    private _getAllUsers = withCatch<any, IUser[]>(async (_req, res) => {
+    private _getUsers = withCatch<any, IUser[]>(async (_req, res) => {
         const users = await this._userService.findMany();
         res.json(users);
     });

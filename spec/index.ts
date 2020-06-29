@@ -11,11 +11,17 @@ const options = commandLineArgs([
         alias: 'f',
         type: String,
     },
+    {
+        name: 'env',
+        alias: 'e',
+        defaultValue: 'testing',
+        type: String,
+    },
 ]);
 
 // Set the env file
 const result2 = dotenv.config({
-    path: `./env/test.env`,
+    path: `./env/testing.env`,
 });
 if (result2.error) {
     throw result2.error;
@@ -26,7 +32,7 @@ const jasmine = new Jasmine(null);
 
 // Set location of test files
 jasmine.loadConfig({
-    random: true,
+    random: false,
     spec_dir: 'spec',
     spec_files: ['./**/*.spec.ts'],
     stopSpecOnExpectationFailure: false,

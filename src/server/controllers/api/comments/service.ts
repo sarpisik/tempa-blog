@@ -10,6 +10,14 @@ export default class CommentService {
         );
         return result.rows;
     }
+    async findOne(id: string) {
+        const result = await this._table.query<IComment>(
+            'SELECT * FROM comments WHERE id = $1',
+            [id]
+        );
+
+        return result.rows[0];
+    }
     async createOne(user_id: string, blog_id: string, content: string) {
         const result = await this._table.query<IComment>(
             'INSERT INTO comments (user_id, blog_id, content) VALUES ($1, $2, $3) RETURNING *',

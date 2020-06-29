@@ -10,6 +10,14 @@ export default class BlogService {
         );
         return result.rows;
     }
+    async findOne(id: string) {
+        const result = await this._table.query<IBlog>(
+            'SELECT * FROM blogs WHERE id = $1',
+            [id]
+        );
+
+        return result.rows[0];
+    }
     async createOne(
         author_id: string,
         status: IBlog['status'],

@@ -3,6 +3,9 @@ import supertest from 'supertest';
 export default class Api {
     constructor(private _agent: supertest.SuperTest<supertest.Test>) {}
 
+    static generatePath = (path: string) => `/api/${path}`;
+    static generateDynamicPath = (path: string) => `/api/${path}/:id`;
+
     get = (path: string) => this._agent.get(path);
 
     post = <Body extends Record<string, unknown>>(path: string, body: Body) =>

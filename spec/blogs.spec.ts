@@ -1,28 +1,31 @@
 import supertest from 'supertest';
 import { BAD_REQUEST, CREATED, OK } from 'http-status-codes';
-import { Response, SuperTest, Test } from 'supertest';
 
 import { pErr } from '@shared/functions';
 import { paramMissingError } from '@shared/constants';
 
 import server from '@server';
+import Api from './api';
 import BlogsService from '@api/blogs/service';
 import { IBlog } from '@api/blogs/interface';
 
 describe('Blogss Routes', () => {
-    const blogsPath = '/api/blogs';
-    const addBlogssPath = `${blogsPath}`;
-    const updateBlogsPath = `${blogsPath}/:id`;
-    const deleteBlogsPath = `${blogsPath}/:id`;
+    let api: Api;
+    let db: { release: (arg0: boolean) => void };
 
-    let agent: SuperTest<Test>;
+    const blogsPath = Api.generatePath('blogs');
+    const blogIdPath = Api.generateDynamicPath('blogs');
 
     beforeAll((done) => {
         server().then((app) => {
-            agent = supertest.agent(app);
-
+            db = app.locals.db;
+            api = new Api(supertest.agent(app));
             done();
         });
+    });
+
+    afterAll(() => {
+        db.release(true);
     });
 
     describe(`"GET:${blogsPath}"`, () => {
@@ -38,7 +41,7 @@ describe('Blogss Routes', () => {
         it(`should return a JSON object with all the blogs and a status code of "${OK}" if the
             request was successful.`, (done) => {
             spyOn(BlogsService.prototype, 'findMany').and.resolveTo(blogs);
-            agent.get(blogsPath).end((err: Error, res: Response) => {
+            api.get(blogsPath).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body).toEqual(blogs);
@@ -52,7 +55,7 @@ describe('Blogss Routes', () => {
             const errMsg = 'Could not fetch blogs.';
             spyOn(BlogsService.prototype, 'findMany').and.throwError(errMsg);
 
-            agent.get(blogsPath).end((err: Error, res: Response) => {
+            api.get(blogsPath).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -61,9 +64,9 @@ describe('Blogss Routes', () => {
         });
     });
 
-    describe(`"POST:${addBlogssPath}"`, () => {
+    describe(`"POST:${blogsPath}"`, () => {
         const callApi = (reqBody: Record<string, unknown>) => {
-            return agent.post(addBlogssPath).type('form').send(reqBody);
+            return api.post(blogsPath, reqBody);
         };
 
         const body = {
@@ -84,24 +87,20 @@ describe('Blogss Routes', () => {
                 created_at: 'some time',
             });
 
-            agent
-                .post(addBlogssPath)
-                .type('form')
-                .send(body) // pick up here
-                .end((err: Error, res: Response) => {
-                    pErr(err);
-                    expect(res.status).toBe(CREATED);
-                    keys.forEach((key) => {
-                        expect(body.blog[key]).toBe(res.body[key]);
-                    });
-                    expect(res.body.error).toBeUndefined();
-                    done();
+            callApi(body).end((err, res) => {
+                pErr(err);
+                expect(res.status).toBe(CREATED);
+                keys.forEach((key) => {
+                    expect(body.blog[key]).toBe(res.body[key]);
                 });
+                expect(res.body.error).toBeUndefined();
+                done();
+            });
         });
 
         it(`should return a JSON Record<string, unknown> with an error message of "${paramMissingError}" and a status
             code of "${BAD_REQUEST}" if the blog param was missing.`, (done) => {
-            callApi({}).end((err: Error, res: Response) => {
+            callApi({}).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -114,7 +113,7 @@ describe('Blogss Routes', () => {
             const errMsg = 'Could not add blog.';
             spyOn(BlogsService.prototype, 'createOne').and.throwError(errMsg);
 
-            callApi(body).end((err: Error, res: Response) => {
+            callApi(body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -123,12 +122,9 @@ describe('Blogss Routes', () => {
         });
     });
 
-    describe(`"PUT:${updateBlogsPath}"`, () => {
+    describe(`"PUT:${blogIdPath}"`, () => {
         const callApi = (id: string, reqBody: Record<string, unknown>) => {
-            return agent
-                .put(updateBlogsPath.replace(':id', id))
-                .type('form')
-                .send(reqBody);
+            return api.put(blogIdPath.replace(':id', id), reqBody);
         };
 
         const body: { blog: IBlog } = {
@@ -144,7 +140,7 @@ describe('Blogss Routes', () => {
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
             spyOn(BlogsService.prototype, 'updateOne').and.resolveTo(body.blog);
 
-            callApi(body.blog.id, body).end((err: Error, res: Response) => {
+            callApi(body.blog.id, body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body).toEqual(body.blog);
@@ -155,7 +151,7 @@ describe('Blogss Routes', () => {
 
         it(`should return a JSON object with an error message of "${paramMissingError}" and a
             status code of "${BAD_REQUEST}" if the blog param was missing.`, (done) => {
-            callApi(body.blog.id, {}).end((err: Error, res: Response) => {
+            callApi(body.blog.id, {}).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -170,7 +166,7 @@ describe('Blogss Routes', () => {
                 updateErrMsg
             );
 
-            callApi(body.blog.id, body).end((err: Error, res: Response) => {
+            callApi(body.blog.id, body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(updateErrMsg);
@@ -179,15 +175,15 @@ describe('Blogss Routes', () => {
         });
     });
 
-    describe(`"DELETE:${deleteBlogsPath}"`, () => {
+    describe(`"DELETE:${blogIdPath}"`, () => {
         const callApi = (id: string) => {
-            return agent.delete(deleteBlogsPath.replace(':id', id));
+            return api.delete(blogIdPath.replace(':id', id));
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
             spyOn(BlogsService.prototype, 'deleteOne').and.resolveTo();
 
-            callApi('5').end((err: Error, res: Response) => {
+            callApi('5').end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body.error).toBeUndefined();
@@ -202,7 +198,7 @@ describe('Blogss Routes', () => {
                 deleteErrMsg
             );
 
-            callApi('1').end((err: Error, res: Response) => {
+            callApi('1').end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(deleteErrMsg);

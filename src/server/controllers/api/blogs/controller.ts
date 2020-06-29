@@ -19,16 +19,25 @@ export default class BlogController extends Controller {
     }
 
     private _initializeRoutes = () => {
-        this.router.get(this.path, this._getAllBlogs);
+        this.router.get(this.path, this._getBlogs);
         this.router.post(this.path, this._createBlog);
+        this.router.get(this.path + '/:id', this._getBlog);
         this.router.put(this.path + '/:id', this._updateBlog);
         this.router.delete(this.path + '/:id', this._deleteBlog);
     };
 
-    private _getAllBlogs = withCatch<any, IBlog[]>(async (_req, res) => {
+    private _getBlogs = withCatch<any, IBlog[]>(async (_req, res) => {
         const blogs = await this._blogService.findMany();
         res.json(blogs);
     });
+
+    private _getBlog = withCatch<BlogParam, IBlog, BlogBody>(
+        async ({ params: { id } }, res) => {
+            const blog = await this._blogService.findOne(id);
+
+            res.status(OK).json(blog);
+        }
+    );
 
     private _createBlog = withCatch<any, IBlog, { blog?: Omit<IBlog, 'id'> }>(
         async ({ body }, res) => {

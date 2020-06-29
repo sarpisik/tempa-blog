@@ -1,28 +1,31 @@
 import supertest from 'supertest';
 import { BAD_REQUEST, CREATED, OK } from 'http-status-codes';
-import { Response, SuperTest, Test } from 'supertest';
 
 import { pErr } from '@shared/functions';
 import { paramMissingError } from '@shared/constants';
 
 import server from '@server';
+import Api from './api';
 import UserService from '@api/users/service';
 import { IUser } from '@api/users/interface';
 
 describe('Users Routes', () => {
-    const usersPath = '/api/users';
-    const addUsersPath = `${usersPath}`;
-    const updateUserPath = `${usersPath}/:id`;
-    const deleteUserPath = `${usersPath}/:id`;
+    let api: Api;
+    let db: { release: (arg0: boolean) => void };
 
-    let agent: SuperTest<Test>;
+    const usersPath = Api.generatePath('users');
+    const userIdPath = Api.generateDynamicPath('users');
 
     beforeAll((done) => {
         server().then((app) => {
-            agent = supertest.agent(app);
-
+            db = app.locals.db;
+            api = new Api(supertest.agent(app));
             done();
         });
+    });
+
+    afterAll(() => {
+        db.release(true);
     });
 
     describe(`"GET:${usersPath}"`, () => {
@@ -37,7 +40,7 @@ describe('Users Routes', () => {
         it(`should return a JSON object with all the users and a status code of "${OK}" if the
             request was successful.`, (done) => {
             spyOn(UserService.prototype, 'findMany').and.resolveTo(users);
-            agent.get(usersPath).end((err: Error, res: Response) => {
+            api.get(usersPath).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body).toEqual(users);
@@ -51,7 +54,7 @@ describe('Users Routes', () => {
             const errMsg = 'Could not fetch users.';
             spyOn(UserService.prototype, 'findMany').and.throwError(errMsg);
 
-            agent.get(usersPath).end((err: Error, res: Response) => {
+            api.get(usersPath).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -60,9 +63,9 @@ describe('Users Routes', () => {
         });
     });
 
-    describe(`"POST:${addUsersPath}"`, () => {
+    describe(`"POST:${usersPath}"`, () => {
         const callApi = (reqBody: Record<string, unknown>) => {
-            return agent.post(addUsersPath).type('form').send(reqBody);
+            return api.post(usersPath, reqBody);
         };
 
         const body = {
@@ -79,24 +82,20 @@ describe('Users Routes', () => {
                 created_at: 'some time',
             });
 
-            agent
-                .post(addUsersPath)
-                .type('form')
-                .send(body) // pick up here
-                .end((err: Error, res: Response) => {
-                    pErr(err);
-                    expect(res.status).toBe(CREATED);
-                    keys.forEach((key) => {
-                        expect(body.user[key]).toBe(res.body[key]);
-                    });
-                    expect(res.body.error).toBeUndefined();
-                    done();
+            callApi(body).end((err, res) => {
+                pErr(err);
+                expect(res.status).toBe(CREATED);
+                keys.forEach((key) => {
+                    expect(body.user[key]).toBe(res.body[key]);
                 });
+                expect(res.body.error).toBeUndefined();
+                done();
+            });
         });
 
         it(`should return a JSON Record<string, unknown> with an error message of "${paramMissingError}" and a status
             code of "${BAD_REQUEST}" if the user param was missing.`, (done) => {
-            callApi({}).end((err: Error, res: Response) => {
+            callApi({}).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -109,7 +108,7 @@ describe('Users Routes', () => {
             const errMsg = 'Could not add user.';
             spyOn(UserService.prototype, 'createOne').and.throwError(errMsg);
 
-            callApi(body).end((err: Error, res: Response) => {
+            callApi(body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(errMsg);
@@ -118,12 +117,9 @@ describe('Users Routes', () => {
         });
     });
 
-    describe(`"PUT:${updateUserPath}"`, () => {
+    describe(`"PUT:${userIdPath}"`, () => {
         const callApi = (id: string, reqBody: Record<string, unknown>) => {
-            return agent
-                .put(updateUserPath.replace(':id', id))
-                .type('form')
-                .send(reqBody);
+            return api.put(userIdPath.replace(':id', id), reqBody);
         };
 
         const body: { user: IUser } = {
@@ -138,7 +134,7 @@ describe('Users Routes', () => {
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
             spyOn(UserService.prototype, 'updateOne').and.resolveTo(body.user);
 
-            callApi(body.user.id, body).end((err: Error, res: Response) => {
+            callApi(body.user.id, body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body).toEqual(body.user);
@@ -149,7 +145,7 @@ describe('Users Routes', () => {
 
         it(`should return a JSON object with an error message of "${paramMissingError}" and a
             status code of "${BAD_REQUEST}" if the user param was missing.`, (done) => {
-            callApi(body.user.id, {}).end((err: Error, res: Response) => {
+            callApi(body.user.id, {}).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(paramMissingError);
@@ -164,7 +160,7 @@ describe('Users Routes', () => {
                 updateErrMsg
             );
 
-            callApi(body.user.id, body).end((err: Error, res: Response) => {
+            callApi(body.user.id, body).end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(updateErrMsg);
@@ -173,15 +169,15 @@ describe('Users Routes', () => {
         });
     });
 
-    describe(`"DELETE:${deleteUserPath}"`, () => {
+    describe(`"DELETE:${userIdPath}"`, () => {
         const callApi = (id: string) => {
-            return agent.delete(deleteUserPath.replace(':id', id));
+            return api.delete(userIdPath.replace(':id', id));
         };
 
         it(`should return a status code of "${OK}" if the request was successful.`, (done) => {
             spyOn(UserService.prototype, 'deleteOne').and.resolveTo();
 
-            callApi('5').end((err: Error, res: Response) => {
+            callApi('5').end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(OK);
                 expect(res.body.error).toBeUndefined();
@@ -196,7 +192,7 @@ describe('Users Routes', () => {
                 deleteErrMsg
             );
 
-            callApi('1').end((err: Error, res: Response) => {
+            callApi('1').end((err, res) => {
                 pErr(err);
                 expect(res.status).toBe(BAD_REQUEST);
                 expect(res.body.error).toBe(deleteErrMsg);

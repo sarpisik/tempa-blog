@@ -24,6 +24,9 @@ export default async function server() {
     // Init express
     const app = express();
 
+    // Keep db connection to release when testing files.
+    app.locals.db = db;
+
     /************************************************************************************
      *                              Set development settings
      ***********************************************************************************/

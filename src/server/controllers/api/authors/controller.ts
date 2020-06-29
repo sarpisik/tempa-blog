@@ -19,13 +19,13 @@ export default class AuthorController extends Controller {
     }
 
     private _initializeRoutes = () => {
-        this.router.get(this.path, this._getAllAuthors);
+        this.router.get(this.path, this._getAuthors);
         this.router.post(this.path, this._createAuthor);
         this.router.put(this.path + '/:id', this._updateAuthor);
         this.router.delete(this.path + '/:id', this._deleteAuthor);
     };
 
-    private _getAllAuthors = withCatch<any, IAuthor[]>(async (_req, res) => {
+    private _getAuthors = withCatch<any, IAuthor[]>(async (_req, res) => {
         const authors = await this._authorService.findMany();
         res.json(authors);
     });

@@ -11,7 +11,7 @@
         "dev": "nodemon",
         "format": "prettier --write 'src/**/*.ts'",
         "check": "prettier --check 'src/**.ts'",
-        "test": "ts-node -r tsconfig-paths/register ./spec",
+        "test": "ts-node -r tsconfig-paths/register ./spec --env=testing",
         "test:watch": "nodemon --config ./spec/nodemon.json"
     },
     "nodemonConfig": {
