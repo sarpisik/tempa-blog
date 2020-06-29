@@ -1,5 +1,5 @@
 import { Pool, PoolClient } from 'pg';
-import queries from './queries';
+import * as queries from './queries';
 import { env } from '../LoadEnv';
 
 const pool = new Pool({
@@ -11,7 +11,7 @@ const pool = new Pool({
 });
 
 async function initializeDb(pool: PoolClient) {
-    for (const query of queries) {
+    for (const query of Object.values(queries)) {
         await pool.query(query);
     }
 
