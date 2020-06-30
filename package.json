@@ -38,7 +38,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "tsc --build tsconfig.prod.json && lint-staged",
+            "pre-commit": "tsc --build ./src/server/tsconfig.prod.json && lint-staged",
             "pre-push": "git diff HEAD --quiet && npm test"
         }
     },
