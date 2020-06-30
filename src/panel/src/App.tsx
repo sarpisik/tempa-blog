@@ -26,7 +26,7 @@ export default function App() {
     }, []);
     return (
         <ThemeProvider theme={theme}>
-            <Router>
+            <Router basename="panel">
                 <Routes />
             </Router>
         </ThemeProvider>

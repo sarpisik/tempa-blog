@@ -8,7 +8,7 @@
         "build:panel": "NODE_ENV=production webpack --config ./src/panel/webpack.config.js",
         "build:manual": "tsc --build tsconfig.prod.json",
         "lint": "eslint --fix",
-        "start": "node -r module-alias/register ./dist --env=production",
+        "start": "node -r module-alias/register ./dist/server --env=production",
         "dev": "concurrently --kill-others-on-fail \"npm run dev:panel\" \"npm run dev:server\"",
         "dev:server": "nodemon",
         "dev:panel": "webpack-dev-server --config ./src/panel/webpack.config.js",
@@ -32,13 +32,13 @@
         }
     },
     "_moduleAliases": {
-        "@daos": "dist/daos",
-        "@entities": "dist/entities",
-        "@lib": "dist/lib",
-        "@db": "dist/db",
-        "@shared": "dist/shared",
-        "@api": "dist/controllers/api",
-        "@server": "dist/Server"
+        "@daos": "dist/server/daos",
+        "@entities": "dist/server/entities",
+        "@lib": "dist/server/lib",
+        "@db": "dist/server/db",
+        "@shared": "dist/server/shared",
+        "@api": "dist/server/controllers/api",
+        "@server": "dist/server/Server"
     },
     "husky": {
         "hooks": {
