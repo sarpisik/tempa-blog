@@ -1,21 +1,28 @@
 const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 const mode = isProd ? 'production' : 'development';
 
+// App directory
+const appDirectory = fs.realpathSync(process.cwd());
+
+// Gets absolute path of file within app directory
+const resolveAppPath = (relativePath) =>
+    path.resolve(appDirectory, relativePath);
+
 module.exports = {
-    entry: './src/components/index.tsx',
+    entry: resolveAppPath('src/panel/src/index.tsx'),
     target: 'web',
     devtool: 'inline-source-map',
     mode,
     output: {
         path: path.resolve(__dirname, '..', 'server', 'public'),
         filename: isProd ? 'scripts/[name].[chunkhash].bundle.js' : '[name].js',
-        publicPath: '/panel',
+        // publicPath: '/panel',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
