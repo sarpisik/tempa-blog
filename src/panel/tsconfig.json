@@ -13,6 +13,7 @@
             "@common/*": ["../common/*"],
             "@app/*": ["./src/app/*"],
             "@components/*": ["./src/components/*"],
+            "@layouts/*": ["./src/layouts/*"],
             "@assets/*": ["./assets/*"]
         }
     },
