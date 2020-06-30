@@ -32,6 +32,7 @@
         "@daos": "dist/daos",
         "@entities": "dist/entities",
         "@lib": "dist/lib",
+        "@db": "dist/db",
         "@shared": "dist/shared",
         "@api": "dist/controllers/api",
         "@server": "dist/Server"
