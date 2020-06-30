@@ -11,7 +11,8 @@
         "target": "es5",
         "paths": {
             "@common/*": ["../common/*"],
-            "@app/*": ["./src/app/*"]
+            "@app/*": ["./src/app/*"],
+            "@assets/*": ["./assets/*"]
         }
     },
     "include": ["src/**/*.tsx", "src/**/*.ts"]

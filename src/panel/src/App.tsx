@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setUserAsync } from './app/slice';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
-import '../assets/scss/index.scss';
+import '@assets/scss/index.scss';
 
 export default function App() {
     const dispatch = useDispatch();
