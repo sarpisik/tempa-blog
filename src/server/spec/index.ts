@@ -21,7 +21,7 @@ const options = commandLineArgs([
 
 // Set the env file
 const result2 = dotenv.config({
-    path: `./env/testing.env`,
+    path: `../../../env/testing.env`,
 });
 if (result2.error) {
     throw result2.error;

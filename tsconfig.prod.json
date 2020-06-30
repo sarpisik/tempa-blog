@@ -5,7 +5,7 @@
         "sourceMap": false
     },
     "exclude": [
-        "spec",
+        "src/server/spec",
         "src/server/**/*.mock.ts",
         "src/server/public/",
         "src/client"
