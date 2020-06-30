@@ -6,7 +6,7 @@ import { BadRequestError } from '@shared/error';
 import { withCatch } from '@shared/hofs';
 
 import AuthorService from './service';
-import { IAuthor } from './interface';
+import { IAuthor } from '@common/entitites';
 
 type AuthorParam = { id: string };
 type AuthorBody = { author: IAuthor };

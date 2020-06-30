@@ -1,4 +1,4 @@
-import { IAuthor } from './interface';
+import { IAuthor } from '@common/entitites';
 import { Table } from '@db/database';
 
 export default class AuthorService {

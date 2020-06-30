@@ -17,6 +17,7 @@
             "@entities/*": ["entities/*"],
             "@lib/*": ["lib/*"],
             "@shared/*": ["shared/*"],
+            "@common/*": ["../common/*"],
             "@api/*": ["controllers/api/*"],
             "@server": ["Server"],
             "@db/*": ["db/*"]

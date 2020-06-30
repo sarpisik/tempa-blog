@@ -7,7 +7,7 @@ import { paramMissingError } from '@shared/constants';
 import server from '@server';
 import Api from './api';
 import AuthorService from '@api/authors/service';
-import { IAuthor } from '@api/authors/interface';
+import { IAuthor } from '@common/entitites';
 
 describe('Authors Routes', () => {
     let api: Api;

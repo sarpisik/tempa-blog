@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": ".",
         "jsx": "react",
         "module": "commonjs",
         "noImplicitAny": true,
@@ -7,7 +8,10 @@
         "preserveConstEnums": true,
         "strict": true,
         "sourceMap": true,
-        "target": "es5"
+        "target": "es5",
+        "paths": {
+            "@common/*": ["../common/*"]
+        }
     },
     "include": ["src/**/*.tsx", "src/**/*.ts"]
 }
