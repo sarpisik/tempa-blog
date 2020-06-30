@@ -3,48 +3,61 @@ import { IAuthor } from '@common/entitites';
 import { AppThunk, RootState } from './store';
 
 interface State {
-    user: IAuthor;
+    user: IAuthor | null;
+    loading: boolean;
+    error: string | null;
 }
 
 const initialState: State = {
-    user: {
-        id: '',
-        name: '',
-        avatar_url: '',
-        description: '',
-        created_at: '',
-    },
+    user: null,
+    loading: false,
+    error: null,
 };
 
 export const userSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        setUser(auth, action: PayloadAction<IAuthor>) {
+        getUserStart(state) {
+            state.loading = true;
+            state.error = null;
+        },
+        getUserSuccess(state, action: PayloadAction<IAuthor>) {
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
             // doesn't actually mutate the state because it uses the Immer library,
             // which detects changes to a "draft state" and produces a brand new
             // immutable state based off those changes
-            auth.user = action.payload;
+            state.loading = false;
+            state.error = null;
+            state.user = action.payload;
+        },
+        getUserFailure(state, action: PayloadAction<string>) {
+            state.loading = false;
+            state.error = action.payload;
         },
     },
 });
 
-export const { setUser } = userSlice.actions;
+export const {
+    getUserStart,
+    getUserSuccess,
+    getUserFailure,
+} = userSlice.actions;
 
 // The function below is called a thunk and allows us to perform async logic. It
 // can be dispatched like a regular action: `dispatch(incrementAsync(10))`. This
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched
-export const setUserAsync = (user: IAuthor): AppThunk => (dispatch) => {
+export const fetchUser = (user: IAuthor): AppThunk => (dispatch) => {
+    dispatch(getUserStart());
     setTimeout(() => {
-        dispatch(setUser(user));
+        dispatch(getUserSuccess(user));
     }, 1000);
 };
 
 // The function below is called a selector and allows us to select a user from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.user)`
-export const selectUser = (state: RootState) => state.auth.user;
+export const selectUser = (state: RootState) => state.auth;
 
 export default userSlice.reducer;

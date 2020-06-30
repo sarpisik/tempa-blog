@@ -2,7 +2,13 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Avatar, Typography, makeStyles } from '@material-ui/core';
+import {
+    Avatar,
+    Typography,
+    makeStyles,
+    CircularProgress,
+    Box,
+} from '@material-ui/core';
 import { useSelectUser } from './hooks';
 
 type ProfileProps = React.HTMLAttributes<HTMLDivElement>;
@@ -28,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile: React.FC<ProfileProps> = (props) => {
     const { className, ...rest } = props;
 
-    const user = useSelectUser();
+    const { user, loading } = useSelectUser();
 
     const classes = useStyles();
 
@@ -38,13 +44,21 @@ const Profile: React.FC<ProfileProps> = (props) => {
                 alt="Person"
                 className={classes.avatar}
                 component={RouterLink}
-                src={user.avatar_url || FALLBACK_AVATAR}
+                src={user?.avatar_url || FALLBACK_AVATAR}
                 to="/settings"
             />
-            <Typography className={classes.name} variant="h4">
-                {user.name}
-            </Typography>
-            <Typography variant="body2">{user.description}</Typography>
+            {loading ? (
+                <Box marginTop={2}>
+                    <CircularProgress size={20} />
+                </Box>
+            ) : (
+                <>
+                    <Typography className={classes.name} variant="h4">
+                        {user?.name}
+                    </Typography>
+                    <Typography variant="body2">{user?.description}</Typography>
+                </>
+            )}
         </div>
     );
 };
