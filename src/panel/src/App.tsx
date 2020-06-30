@@ -18,7 +18,7 @@ export default function App() {
             setUserAsync({
                 id: '12345',
                 name: 'Test user',
-                avatar_url: 'http://avatar.com',
+                avatar_url: '',
                 description: 'Awsome user',
                 created_at: '10.10.2020',
             })

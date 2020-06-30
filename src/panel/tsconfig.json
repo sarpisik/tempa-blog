@@ -9,13 +9,14 @@
         "strict": true,
         "sourceMap": true,
         "target": "es5",
+        "moduleResolution": "node",
         "paths": {
             "@common/*": ["../common/*"],
-            "@app/*": ["./src/app/*"],
-            "@components/*": ["./src/components/*"],
-            "@layouts/*": ["./src/layouts/*"],
-            "@assets/*": ["./assets/*"]
+            "@app/*": ["src/app/*"],
+            "@components/*": ["src/components/*"],
+            "@layouts/*": ["src/layouts/*"],
+            "@assets/*": ["assets/*"]
         }
     },
-    "include": ["src/**/*.tsx", "src/**/*.ts"]
+    "include": ["**/*.tsx", "**/*.ts"]
 }

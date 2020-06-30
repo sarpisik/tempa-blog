@@ -3,6 +3,7 @@ const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const resolveTsconfigPathsToAlias = require('./resolveTsconfigPathToWebpackAlias');
 
 const isProd = process.env.NODE_ENV === 'production';
 const mode = isProd ? 'production' : 'development';
@@ -26,6 +27,7 @@ module.exports = {
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
+        alias: resolveTsconfigPathsToAlias(),
     },
     module: {
         rules: [
@@ -41,10 +43,7 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                ],
+                use: [MiniCssExtractPlugin.loader, 'css-loader'],
             },
             {
                 test: /\.(sa|sc)ss$/,
