@@ -6,7 +6,8 @@ try {
     // Remove current build
     fs.removeSync('./dist/');
     // Copy front-end files
-    fs.copySync('./src/server/public', './dist/public');
+    fs.copySync('./src/client/build', './dist/public');
+    fs.copySync('./src/panel/build', './dist/public/panel');
     fs.copySync('./src/server/views', './dist/views');
     // Transpile the typescript files
     const proc = childProcess.exec('tsc --build ./src/server/tsconfig.prod.json');

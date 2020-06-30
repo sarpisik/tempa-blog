@@ -61,6 +61,7 @@ typings/
 
 # build files
 dist/
+build/
 
 # client bundles
 src/server/public/scripts

@@ -20,9 +20,9 @@ module.exports = {
     devtool: 'inline-source-map',
     mode,
     output: {
-        path: path.resolve(__dirname, '..', 'server', 'public'),
+        path: path.resolve(__dirname, 'build'),
         filename: isProd ? 'scripts/[name].[chunkhash].bundle.js' : '[name].js',
-        publicPath: '/panel',
+        // publicPath: '/panel',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],

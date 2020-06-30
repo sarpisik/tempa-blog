@@ -17,7 +17,7 @@ const config = {
     devtool: 'inline-source-map',
     entry: generateEntries(isProd),
     output: {
-        path: path.resolve(__dirname, '..', 'server', 'public'),
+        path: path.resolve(__dirname, 'build'),
         filename: isProd ? 'scripts/[name].[chunkhash].bundle.js' : '[name].js',
         publicPath: '/',
     },
