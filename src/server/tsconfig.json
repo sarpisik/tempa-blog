@@ -6,24 +6,24 @@
         "experimentalDecorators": true,
         "importHelpers": true,
         "module": "commonjs",
-        "outDir": "dist",
+        "outDir": "../../dist",
         "removeComments": true,
         "sourceMap": true,
         "strict": true,
         "target": "es6",
         "moduleResolution": "node",
         "paths": {
-            "@daos/*": ["src/server/daos/*"],
-            "@entities/*": ["src/server/entities/*"],
-            "@lib/*": ["src/server/lib/*"],
-            "@shared/*": ["src/server/shared/*"],
-            "@api/*": ["src/server/controllers/api/*"],
-            "@server": ["src/server/Server"],
-            "@db/*": ["src/server/db/*"]
+            "@daos/*": ["daos/*"],
+            "@entities/*": ["entities/*"],
+            "@lib/*": ["lib/*"],
+            "@shared/*": ["shared/*"],
+            "@api/*": ["controllers/api/*"],
+            "@server": ["Server"],
+            "@db/*": ["db/*"]
         },
         "types": ["node"],
         "typeRoots": ["node_modules/@types"]
     },
-    "include": ["src/server/**/*.ts", "src/server/**/*.json"],
-    "exclude": ["src/server/public", "src/client"]
+    "include": ["**/*.ts", "**/*.json"],
+    "exclude": ["public"]
 }

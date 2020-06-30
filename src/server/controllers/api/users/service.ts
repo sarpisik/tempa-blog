@@ -1,5 +1,5 @@
 import { IUser } from './interface';
-import { Table } from 'src/server/db/database';
+import { Table } from '@db/database';
 
 export default class UserService {
     constructor(private _table: Table) {}

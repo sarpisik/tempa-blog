@@ -1,5 +1,5 @@
 import { IBlog } from './interface';
-import { Table } from 'src/server/db/database';
+import { Table } from '@db/database';
 
 export default class BlogService {
     constructor(private _table: Table) {}

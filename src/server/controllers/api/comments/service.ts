@@ -1,5 +1,5 @@
 import { IComment } from './interface';
-import { Table } from 'src/server/db/database';
+import { Table } from '@db/database';
 
 export default class CommentService {
     constructor(private _table: Table) {}

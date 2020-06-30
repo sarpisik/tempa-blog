@@ -1,5 +1,5 @@
 import { IAuthor } from './interface';
-import { Table } from 'src/server/db/database';
+import { Table } from '@db/database';
 
 export default class AuthorService {
     constructor(private _table: Table) {}
