@@ -5,7 +5,6 @@
         "noImplicitAny": true,
         "esModuleInterop": true,
         "preserveConstEnums": true,
-        "removeComments": true,
         "strict": true,
         "sourceMap": true,
         "target": "es5"
