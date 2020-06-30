@@ -10,7 +10,8 @@
         "sourceMap": true,
         "target": "es5",
         "paths": {
-            "@common/*": ["../common/*"]
+            "@common/*": ["../common/*"],
+            "@app/*": ["./src/app/*"]
         }
     },
     "include": ["src/**/*.tsx", "src/**/*.ts"]
