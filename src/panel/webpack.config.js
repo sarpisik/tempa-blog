@@ -2,8 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const isProd = process.env.NODE_ENV === 'production';
 const mode = isProd ? 'production' : 'development';
@@ -50,12 +49,7 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
-            template: path.resolve(
-                __dirname,
-                'src',
-                'components',
-                'index.html'
-            ),
+            template: path.resolve(__dirname, 'src', 'index.html'),
         }),
         new MiniCssExtractPlugin({
             filename: isProd ? 'stylesheets/[name].[hash].css' : '[name].css',
