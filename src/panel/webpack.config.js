@@ -40,13 +40,21 @@ module.exports = {
                 loader: 'source-map-loader',
             },
             {
-                test: /\.(sa|sc|c)ss$/,
+                test: /\.css$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader',
+                ],
+            },
+            {
+                test: /\.(sa|sc)ss$/,
                 use: [
                     {
                         loader: MiniCssExtractPlugin.loader,
                         options: { hmr: !isProd },
                     },
-                    'css-loader',
+                    // 'style-loader',
+                    { loader: 'css-loader', options: { importLoaders: 1 } },
                     'postcss-loader',
                     'sass-loader',
                 ],
