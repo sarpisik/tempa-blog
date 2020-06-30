@@ -12,6 +12,7 @@
         "paths": {
             "@common/*": ["../common/*"],
             "@app/*": ["./src/app/*"],
+            "@components/*": ["./src/components/*"],
             "@assets/*": ["./assets/*"]
         }
     },
