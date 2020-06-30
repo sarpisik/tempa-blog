@@ -57,7 +57,11 @@
         "serialize-javascript": "4.0.0"
     },
     "dependencies": {
+        "@material-ui/core": "^4.10.2",
+        "@material-ui/icons": "^4.9.1",
+        "@material-ui/styles": "^4.10.0",
         "bootstrap": "4.5.0",
+        "clsx": "^1.1.1",
         "command-line-args": "5.1.1",
         "cookie-parser": "1.4.5",
         "dotenv": "8.2.0",
@@ -70,9 +74,11 @@
         "morgan": "1.10.0",
         "npm-force-resolutions": "0.0.3",
         "pg": "^8.2.1",
+        "prop-types": "^15.7.2",
         "pug": "3.0.0",
         "react": "^16.13.1",
         "react-dom": "^16.13.1",
+        "react-router-dom": "^5.2.0",
         "winston": "3.3.1"
     },
     "devDependencies": {
