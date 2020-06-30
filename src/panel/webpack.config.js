@@ -22,7 +22,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, '..', 'server', 'public'),
         filename: isProd ? 'scripts/[name].[chunkhash].bundle.js' : '[name].js',
-        // publicPath: '/panel',
+        publicPath: '/panel',
     },
     resolve: {
         extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
