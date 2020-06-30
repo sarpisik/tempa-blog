@@ -9,6 +9,7 @@
         "lint": "eslint --fix",
         "start": "node -r module-alias/register ./dist --env=production",
         "dev": "nodemon",
+        "dev:panel": "webpack-dev-server --open",
         "format": "prettier --write 'src/**/*.ts'",
         "check": "prettier --check 'src/**.ts'",
         "test": "nyc --reporter=html ts-node -r tsconfig-paths/register ./spec --env=testing",
