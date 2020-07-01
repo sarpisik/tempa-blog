@@ -19,7 +19,7 @@ export default function App() {
                 id: '12345',
                 name: 'Test user',
                 avatar_url: '',
-                description: 'Awsome user',
+                bio: 'Awsome user',
                 created_at: '10.10.2020',
             })
         );

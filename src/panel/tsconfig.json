@@ -13,6 +13,8 @@
         "paths": {
             "@common/*": ["../common/*"],
             "@app/*": ["src/app/*"],
+            "@api": ["src/api/index"],
+            "@lib/*": ["src/lib/*"],
             "@components/*": ["src/components/*"],
             "@layouts/*": ["src/layouts/*"],
             "@assets/*": ["assets/*"]

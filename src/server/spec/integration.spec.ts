@@ -33,7 +33,7 @@ describe('Application', () => {
         author = {
             name: 'John DOE',
             avatar_url: 'http://avatrs.com/john-doe',
-            description: 'Awsome blogger.',
+            bio: 'Awsome blogger.',
         }
     ) => ({ author });
     const generateBlogBody = (author_id: string, status: IBlog['status']) => ({
@@ -85,15 +85,15 @@ describe('Application', () => {
                 const updateBody = generateAuthorBody({
                     name: 'Jane WRITER',
                     avatar_url: 'http://avatrs.com/jane-writer',
-                    description: 'Awsome blogger.',
+                    bio: 'Awsome blogger.',
                 });
                 api.put(
                     dynamicPath(authorIdPath, res.body.id),
                     updateBody
                 ).then((res) => {
-                    const { id, name, avatar_url, description } = res.body;
+                    const { id, name, avatar_url, bio } = res.body;
                     expect(res.status).toBe(OK);
-                    expect({ name, avatar_url, description }).toEqual(
+                    expect({ name, avatar_url, bio }).toEqual(
                         updateBody.author
                     );
                     expect(res.body.error).toBeUndefined();

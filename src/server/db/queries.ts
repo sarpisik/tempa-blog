@@ -12,7 +12,7 @@ export const authors_table = `CREATE TABLE IF NOT EXISTS authors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name varchar(255) NOT NULL,
     avatar_url text NOT NULL,
-    description text NOT NULL,
+    bio text NOT NULL,
     created_at TIMESTAMPTZ DEFAULT Now()
 )`;
 

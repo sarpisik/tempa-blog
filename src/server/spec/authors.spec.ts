@@ -34,7 +34,7 @@ describe('Authors Routes', () => {
                 id: '12345',
                 name: 'Test Author',
                 avatar_url: 'test-url',
-                description: 'This is a test description.',
+                bio: 'This is a test bio.',
                 created_at: 'some time zone',
             },
         ];
@@ -73,7 +73,7 @@ describe('Authors Routes', () => {
             author: {
                 name: 'Test Author',
                 avatar_url: 'test-url',
-                description: 'This is a test description.',
+                bio: 'This is a test bio.',
             },
         };
 
@@ -132,7 +132,7 @@ describe('Authors Routes', () => {
                 id: '12345',
                 name: 'Test Author',
                 avatar_url: 'test-url',
-                description: 'This is a test description.',
+                bio: 'This is a test bio.',
                 created_at: 'some time zone',
             },
         };

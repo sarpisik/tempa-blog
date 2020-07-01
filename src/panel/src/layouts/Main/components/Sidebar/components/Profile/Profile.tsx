@@ -56,7 +56,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                     <Typography className={classes.name} variant="h4">
                         {user?.name}
                     </Typography>
-                    <Typography variant="body2">{user?.description}</Typography>
+                    <Typography variant="body2">{user?.bio}</Typography>
                 </>
             )}
         </div>

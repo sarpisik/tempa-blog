@@ -1,7 +1,9 @@
-export interface IAuthor {
-    id: string;
+export interface PreAuthor {
     name: string;
+    bio: string;
+}
+export interface IAuthor extends PreAuthor {
+    id: string;
     avatar_url: string;
-    description: string;
     created_at: string;
 }

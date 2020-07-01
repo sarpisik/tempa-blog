@@ -10,21 +10,21 @@ export default class AuthorService {
         );
         return result.rows;
     }
-    async createOne(name: string, avatar_url: string, description: string) {
+    async createOne(name: string, avatar_url: string, bio: string) {
         const result = await this._table.query<IAuthor>(
-            'INSERT INTO authors (name, avatar_url, description) VALUES ($1, $2, $3) RETURNING *',
-            [name, avatar_url, description]
+            'INSERT INTO authors (name, avatar_url, bio) VALUES ($1, $2, $3) RETURNING *',
+            [name, avatar_url, bio]
         );
 
         return result.rows[0];
     }
     async updateOne(
         id: string,
-        { name, avatar_url, description }: Omit<IAuthor, 'id'>
+        { name, avatar_url, bio }: Omit<IAuthor, 'id'>
     ) {
         const result = await this._table.query<IAuthor>(
-            'UPDATE authors SET name = $1, avatar_url = $2, description = $3 WHERE id = $4 RETURNING *',
-            [name, avatar_url, description, id]
+            'UPDATE authors SET name = $1, avatar_url = $2, bio = $3 WHERE id = $4 RETURNING *',
+            [name, avatar_url, bio, id]
         );
 
         return result.rows[0];

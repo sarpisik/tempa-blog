@@ -37,12 +37,12 @@ export default class AuthorController extends Controller {
     >(async ({ body }, res) => {
         if (!body.author) throw new BadRequestError();
 
-        const { name, avatar_url, description } = body.author;
+        const { name, avatar_url, bio } = body.author;
 
         const author = await this._authorService.createOne(
             name,
             avatar_url,
-            description
+            bio
         );
 
         res.status(CREATED).json(author);
