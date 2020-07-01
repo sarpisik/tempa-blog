@@ -5,7 +5,7 @@ import Routes from './Routes';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 import { useDispatch } from 'react-redux';
-import { fetchUser } from '@app/userSlice';
+import { fetchAuth } from '@app/authSlice';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import '@assets/scss/index.scss';
@@ -13,9 +13,9 @@ import '@assets/scss/index.scss';
 export default function App() {
     const dispatch = useDispatch();
 
-    React.useEffect(function fetchUserOnMounted() {
+    React.useEffect(function fetchAuthOnMounted() {
         dispatch(
-            fetchUser({
+            fetchAuth({
                 id: '12345',
                 name: 'Test user',
                 avatar_url: '',

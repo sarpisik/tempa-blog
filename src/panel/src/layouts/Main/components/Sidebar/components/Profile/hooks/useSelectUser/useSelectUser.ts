@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
-import { selectUser } from '@app/userSlice';
+import { selectAuth } from '@app/authSlice';
 
-export default function useSelectUser() {
-    return useSelector(selectUser);
+export default function useSelectAuth() {
+    return useSelector(selectAuth);
 }
