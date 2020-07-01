@@ -1,1 +1,1 @@
-export { default as useSelectUser } from './useSelectUser';
+export { default as useSelectAuth } from './useSelectAuth';

@@ -9,7 +9,7 @@ import {
     CircularProgress,
     Box,
 } from '@material-ui/core';
-import { useSelectUser } from './hooks';
+import { useSelectAuth } from './hooks';
 
 type ProfileProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -34,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 const Profile: React.FC<ProfileProps> = (props) => {
     const { className, ...rest } = props;
 
-    const { user, loading } = useSelectUser();
+    const { user, loading } = useSelectAuth();
 
     const classes = useStyles();
 
