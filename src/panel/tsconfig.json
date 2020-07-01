@@ -15,7 +15,7 @@
             "@app/*": ["src/app/*"],
             "@api": ["src/api/index"],
             "@lib/*": ["src/lib/*"],
-            "@components/*": ["src/components/*"],
+            "@components": ["src/components/index"],
             "@layouts/*": ["src/layouts/*"],
             "@assets/*": ["assets/*"]
         }

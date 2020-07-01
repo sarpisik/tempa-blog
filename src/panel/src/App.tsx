@@ -10,6 +10,8 @@ import { fetchAuth } from '@app/authSlice';
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import '@assets/scss/index.scss';
 
+const BASE_NAME = process.env.NODE_ENV === 'development' ? '' : 'panel';
+
 export default function App() {
     const dispatch = useDispatch();
 
@@ -26,7 +28,7 @@ export default function App() {
     }, []);
     return (
         <ThemeProvider theme={theme}>
-            <Router basename="panel">
+            <Router basename={BASE_NAME}>
                 <Routes />
             </Router>
         </ThemeProvider>
