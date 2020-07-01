@@ -5,7 +5,7 @@ import Routes from './Routes';
 import { ThemeProvider } from '@material-ui/styles';
 import theme from './theme';
 import { useDispatch } from 'react-redux';
-import { fetchUser } from '@app/slice';
+import { fetchUser } from '@app/userSlice';
 
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import '@assets/scss/index.scss';
