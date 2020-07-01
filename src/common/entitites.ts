@@ -1,5 +1,6 @@
 export interface PreAuthor {
     name: string;
+    email: string;
     bio: string;
 }
 export interface IAuthor extends PreAuthor {

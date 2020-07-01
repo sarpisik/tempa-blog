@@ -31,6 +31,7 @@ describe('Application', () => {
     const dynamicPath = (path: string, id: string) => path.replace(':id', id);
     const generateAuthorBody = (
         author = {
+            email: 'test@example.com',
             name: 'John DOE',
             avatar_url: 'http://avatrs.com/john-doe',
             bio: 'Awsome blogger.',
@@ -83,6 +84,7 @@ describe('Application', () => {
         it('authors api should succeed.', (done) => {
             api.post(authorsPath, generateAuthorBody()).then((res) => {
                 const updateBody = generateAuthorBody({
+                    email: 'test@example.com',
                     name: 'Jane WRITER',
                     avatar_url: 'http://avatrs.com/jane-writer',
                     bio: 'Awsome blogger.',

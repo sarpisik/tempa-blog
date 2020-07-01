@@ -20,6 +20,7 @@ export default function App() {
             fetchAuth({
                 id: '12345',
                 name: 'Test user',
+                email: 'test@example.com',
                 avatar_url: '',
                 bio: 'Awsome user',
                 created_at: '10.10.2020',

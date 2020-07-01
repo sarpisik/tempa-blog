@@ -32,6 +32,7 @@ describe('Authors Routes', () => {
         const authors: IAuthor[] = [
             {
                 id: '12345',
+                email: 'test@example.com',
                 name: 'Test Author',
                 avatar_url: 'test-url',
                 bio: 'This is a test bio.',
@@ -71,6 +72,7 @@ describe('Authors Routes', () => {
 
         const body = {
             author: {
+                email: 'test@example.com',
                 name: 'Test Author',
                 avatar_url: 'test-url',
                 bio: 'This is a test bio.',
@@ -130,6 +132,7 @@ describe('Authors Routes', () => {
         const body: { author: IAuthor } = {
             author: {
                 id: '12345',
+                email: 'test@example.com',
                 name: 'Test Author',
                 avatar_url: 'test-url',
                 bio: 'This is a test bio.',

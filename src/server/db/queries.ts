@@ -10,6 +10,7 @@ END $$;
 
 export const authors_table = `CREATE TABLE IF NOT EXISTS authors (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
     avatar_url text NOT NULL,
     bio text NOT NULL,
