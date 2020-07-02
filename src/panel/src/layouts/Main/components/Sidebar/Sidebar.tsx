@@ -52,7 +52,7 @@ const Sidebar: React.FC<SideBarProps> = (props) => {
     const pages = [
         {
             title: 'Dashboard',
-            href: '/dashboard',
+            href: '/',
             icon: <DashboardIcon />,
         },
         {

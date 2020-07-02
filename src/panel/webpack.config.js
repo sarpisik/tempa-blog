@@ -20,6 +20,11 @@ module.exports = {
     target: 'web',
     devtool: 'inline-source-map',
     mode,
+    devServer: {
+        historyApiFallback: true,
+        contentBase: './',
+        hot: true,
+    },
     output: {
         path: path.resolve(__dirname, 'build'),
         filename: isProd ? 'scripts/[name].[chunkhash].bundle.js' : '[name].js',

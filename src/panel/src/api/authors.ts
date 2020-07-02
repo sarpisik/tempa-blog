@@ -1,5 +1,5 @@
 import { IAuthor, PreAuthor } from '@common/entitites';
-import { PostRequest } from '@lib/requests';
+import { PostRequest, GetRequest } from '@lib/requests';
 
 class AuthorsApi {
     url: string;
@@ -8,8 +8,17 @@ class AuthorsApi {
         this.url = '/authors';
     }
 
+    getAuthors() {
+        const getRequest = new GetRequest(this.url);
+
+        return getRequest.sendJson<IAuthor[]>();
+    }
+
     postAuthor(author: PreAuthor) {
-        const postRequest = new PostRequest(this.url, { body: { author } });
+        const postRequest = new PostRequest(this.url, {
+            // TODO: Set correct avatar url
+            body: { author: { ...author, avatar_url: '' } },
+        });
 
         return postRequest.sendJson<IAuthor>();
     }

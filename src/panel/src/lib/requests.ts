@@ -24,7 +24,6 @@ class RequestJsonHandler extends BaseRequestHandler {
         url: string,
         options: ConstructorParameters<typeof BaseRequestHandler>[1] = {}
     ) {
-        options.body = JSON.stringify(options.body);
         options.headers = options?.headers || {};
         // @ts-ignore
         options.headers['Accept'] = 'application/json';
@@ -39,18 +38,29 @@ class RequestJsonHandler extends BaseRequestHandler {
     }
 
     sendJson<R>() {
-        return super._send().then<R>(this._parseJson);
+        return super._send().then<R | { error: string }>(this._parseJson);
     }
 }
 
 type RequestPostOptions = Omit<RequestInit, 'body'> & {
-    body?: Record<string, unknown>;
+    body?: Record<string, unknown> | string;
 };
 
 export class PostRequest extends RequestJsonHandler {
     constructor(url: string, options: RequestPostOptions = {}) {
         options.method = 'post';
+        options.body = JSON.stringify(options.body);
         // @ts-ignore
+        super(url, options);
+    }
+}
+
+export class GetRequest extends RequestJsonHandler {
+    constructor(
+        url: string,
+        options: ConstructorParameters<typeof RequestJsonHandler>[1] = {}
+    ) {
+        options.method = 'get';
         super(url, options);
     }
 }

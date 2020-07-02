@@ -2,64 +2,74 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IAuthor, PreAuthor } from '@common/entitites';
 import { AuthorsApi } from '@api';
 
-import { asyncFailed, asyncStart } from './shared/reducers';
-import { AsyncState } from './shared/types';
-import { AppThunk, RootState } from './store';
+import { RootState } from './store';
+import { withCatchError, setSuccess } from './feedbackSlice';
+import { setLoading } from './loadingSlice';
 
-interface State extends AsyncState {
-    authors: IAuthor[];
-}
+const initialState: IAuthor[] = [];
 
-const initialState: State = {
-    authors: [],
-    loading: false,
-    error: null,
-};
+const subscribers = {
+    getAuthor: 'GET_AUTHORS',
+    postAuthor: 'POST_AUTHOR',
+} as const;
 
 export const authorsSlice = createSlice({
     name: 'authors',
     initialState,
     reducers: {
-        asyncStart,
-        asyncFailed,
-        getAuthorsSuccess(state, action: PayloadAction<State['authors']>) {
-            state.loading = false;
-            state.error = null;
-            state.authors = action.payload;
+        getAuthorsSuccess(state, action: PayloadAction<IAuthor[]>) {
+            action.payload.forEach((author) => state.push(author));
         },
         postAuthorSuccess(state, action: PayloadAction<IAuthor>) {
-            state.loading = false;
-            state.error = null;
-            state.authors.push(action.payload);
+            state.push(action.payload);
         },
         putAuthorSuccess(state, { payload }: PayloadAction<IAuthor>) {
-            const authorIndex = state.authors.findIndex(
-                (a) => a.id === payload.id
-            );
-            state.authors[authorIndex] = payload;
-            state.loading = false;
-            state.error = null;
+            const authorIndex = state.findIndex((a) => a.id === payload.id);
+            state[authorIndex] = payload;
         },
     },
 });
 
 export const { getAuthorsSuccess, postAuthorSuccess } = authorsSlice.actions;
 
-export const postAuthor = (data: PreAuthor): AppThunk => async (dispatch) => {
-    try {
-        dispatch(authorsSlice.actions.asyncStart());
+const isError = <T = any>(
+    tested: T | { error: string }
+): tested is { error: string } => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return Boolean(tested.error);
+};
 
-        const author = await AuthorsApi.postAuthor(data);
+export const getAuthors = withCatchError<PreAuthor>(
+    subscribers.getAuthor,
+    () => async (dispatch) => {
+        dispatch(setLoading(subscribers.getAuthor));
 
-        dispatch(postAuthorSuccess(author));
-    } catch (error) {
+        const response = await AuthorsApi.getAuthors();
+
+        if (isError(response)) throw new Error(response.error);
+        dispatch(getAuthorsSuccess(response));
+    }
+);
+
+export const postAuthor = withCatchError<PreAuthor>(
+    subscribers.postAuthor,
+    (data) => async (dispatch) => {
+        dispatch(setLoading(subscribers.postAuthor));
+
+        const response = await AuthorsApi.postAuthor(data);
+
+        if (isError(response)) throw new Error(response.error);
+
+        dispatch(postAuthorSuccess(response));
         dispatch(
-            authorsSlice.actions.asyncFailed(
-                error.message || 'Something went wrong.'
-            )
+            setSuccess({
+                message: 'Author create success.',
+                subscriber: subscribers.postAuthor,
+            })
         );
     }
-};
+);
 
 export const selectAuthors = (state: RootState) => state.authors;
 

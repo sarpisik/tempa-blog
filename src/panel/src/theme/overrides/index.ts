@@ -1,4 +1,5 @@
 import MuiButton from './MuiButton';
+import MuiCssBaseline from './MuiCssBaseline';
 import MuiIconButton from './MuiIconButton';
 import MuiPaper from './MuiPaper';
 import MuiTableCell from './MuiTableCell';
@@ -7,6 +8,7 @@ import MuiTypography from './MuiTypography';
 
 export default {
     MuiButton,
+    MuiCssBaseline,
     MuiIconButton,
     MuiPaper,
     MuiTableCell,

@@ -33,11 +33,14 @@ export default async function server() {
 
     if (isDev) {
         // hot module reload
+        const cors = require('cors');
         const webpack = require('webpack');
         const webpackHotMiddleware = require('webpack-hot-middleware');
         const webpackDevMiddleware = require('webpack-dev-middleware');
         const config = require('../client/webpack.config');
         const compiler = webpack(config);
+
+        app.use(cors());
 
         app.use(
             webpackDevMiddleware(compiler, {

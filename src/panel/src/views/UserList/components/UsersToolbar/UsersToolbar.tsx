@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { Button, makeStyles } from '@material-ui/core';
-import { SearchInput, FormDialog } from '@components';
+import { makeStyles } from '@material-ui/core';
+import { SearchInput } from '@components';
+import AddUser from './AddUser/AddUser';
 
 type UsersToolbarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -16,12 +17,6 @@ const useStyles = makeStyles((theme) => ({
     },
     spacer: {
         flexGrow: 1,
-    },
-    importButton: {
-        marginRight: theme.spacing(1),
-    },
-    exportButton: {
-        marginRight: theme.spacing(1),
     },
     searchInput: {
         marginRight: theme.spacing(1),
@@ -37,9 +32,7 @@ const UsersToolbar: React.FC<UsersToolbarProps> = (props) => {
         <div {...rest} className={clsx(classes.root, className)}>
             <div className={classes.row}>
                 <span className={classes.spacer} />
-                <Button className={classes.importButton}>Import</Button>
-                <Button className={classes.exportButton}>Export</Button>
-                <FormDialog buttonContent="Add user" dialogTitle="New User" />
+                <AddUser />
             </div>
             <div className={classes.row}>
                 <SearchInput

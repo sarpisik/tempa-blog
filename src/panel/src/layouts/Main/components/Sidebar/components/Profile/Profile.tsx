@@ -2,14 +2,9 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import {
-    Avatar,
-    Typography,
-    makeStyles,
-    CircularProgress,
-    Box,
-} from '@material-ui/core';
+import { Avatar, Typography, makeStyles, Box } from '@material-ui/core';
 import { useSelectAuth } from './hooks';
+import { Spinner } from '@components';
 
 type ProfileProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -49,7 +44,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
             />
             {loading ? (
                 <Box marginTop={2}>
-                    <CircularProgress size={20} />
+                    <Spinner />
                 </Box>
             ) : (
                 <>

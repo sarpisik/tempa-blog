@@ -8,6 +8,7 @@ import {
     Dashboard as DashboardView,
     // ProductList as ProductListView,
     UserList as UserListView,
+    User as UserView,
     // Typography as TypographyView,
     // Icons as IconsView,
     // Account as AccountView,
@@ -31,6 +32,12 @@ const Routes = () => {
                 exact
                 layout={MainLayout}
                 path="/users"
+            />
+            <RouteWithLayout
+                component={UserView}
+                exact
+                layout={MainLayout}
+                path="/users/:userId"
             />
             {/* 
             <RouteWithLayout

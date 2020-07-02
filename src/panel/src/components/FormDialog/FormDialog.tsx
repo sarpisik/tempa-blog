@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -5,18 +6,47 @@ import {
     Dialog,
     DialogTitle,
     DialogContent,
-    TextField,
     DialogActions,
 } from '@material-ui/core';
+import Spinner from '../Spinner';
+
+interface LoadingButtonProps extends React.ComponentProps<typeof Button> {
+    loading: boolean;
+}
+
+const LoadingButton: React.FC<LoadingButtonProps> = ({
+    children,
+    loading,
+    ...btnProps
+}) => {
+    return (
+        <Button type="submit" color="primary" disabled={loading} {...btnProps}>
+            {loading ? <Spinner /> : children}
+        </Button>
+    );
+};
+
+LoadingButton.propTypes = {
+    children: PropTypes.node,
+    //@ts-ignore
+    loading: PropTypes.bool,
+};
 
 interface FormDialogProps {
     buttonContent: React.ReactNode;
     dialogTitle: React.ReactNode;
+    loading: boolean;
+    onSubmit: any;
+    close: boolean;
 }
 
 const FormDialog: React.FC<FormDialogProps> = ({
     buttonContent,
     dialogTitle,
+    loading,
+    onSubmit,
+    children,
+    close,
 }) => {
     const [open, setOpen] = React.useState(false);
 
@@ -27,6 +57,13 @@ const FormDialog: React.FC<FormDialogProps> = ({
     const handleClose = () => {
         setOpen(false);
     };
+
+    React.useEffect(
+        function closeFormDialogByProp() {
+            close && setOpen(false);
+        },
+        [close]
+    );
 
     return (
         <>
@@ -43,24 +80,15 @@ const FormDialog: React.FC<FormDialogProps> = ({
                 aria-labelledby="form-dialog-title"
             >
                 <DialogTitle id="form-dialog-title">{dialogTitle}</DialogTitle>
-                <DialogContent>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="name"
-                        label="Email Address"
-                        type="email"
-                        fullWidth
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} color="primary">
-                        Cancel
-                    </Button>
-                    <Button onClick={handleClose} color="primary">
-                        Save
-                    </Button>
-                </DialogActions>
+                <form onSubmit={onSubmit}>
+                    <DialogContent>{children}</DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose} color="primary">
+                            Close
+                        </Button>
+                        <LoadingButton loading={loading}>Save</LoadingButton>
+                    </DialogActions>
+                </form>
             </Dialog>
         </>
     );
@@ -69,6 +97,12 @@ const FormDialog: React.FC<FormDialogProps> = ({
 FormDialog.propTypes = {
     buttonContent: PropTypes.node,
     dialogTitle: PropTypes.node,
+    // @ts-ignore
+    loading: PropTypes.bool,
+    // @ts-ignore
+    close: PropTypes.bool,
+    onSubmit: PropTypes.func,
+    children: PropTypes.node,
 };
 
 export default FormDialog;
