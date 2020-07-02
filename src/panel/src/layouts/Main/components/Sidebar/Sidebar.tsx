@@ -5,20 +5,24 @@ import PropTypes from 'prop-types';
 import { Divider, Drawer, makeStyles } from '@material-ui/core';
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
-import TextFieldsIcon from '@material-ui/icons/TextFields';
-import ImageIcon from '@material-ui/icons/Image';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import SettingsIcon from '@material-ui/icons/Settings';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
 
 import { Profile, SidebarNav } from './components';
+import { pages } from '@configs';
 
 interface SideBarProps extends React.HTMLAttributes<HTMLDivElement> {
     variant: React.ComponentProps<typeof Drawer>['variant'];
     open: React.ComponentProps<typeof Drawer>['open'];
     onClose: React.ComponentProps<typeof Drawer>['onClose'];
 }
+
+type PageType = typeof pages[number];
+
+const ICONS: Record<PageType['title'], JSX.Element> = {
+    Dashboard: <DashboardIcon />,
+    Authors: <PeopleIcon />,
+};
+
+const PAGES = pages.map((page) => ({ ...page, icon: ICONS[page.title] }));
 
 const useStyles = makeStyles((theme) => ({
     drawer: {
@@ -30,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
     },
     root: {
         // @ts-ignore
-        backgroundColor: theme.palette.white,
+        backgroundColor: theme.palette.white.main,
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
@@ -49,49 +53,6 @@ const Sidebar: React.FC<SideBarProps> = (props) => {
 
     const classes = useStyles();
 
-    const pages = [
-        {
-            title: 'Dashboard',
-            href: '/',
-            icon: <DashboardIcon />,
-        },
-        {
-            title: 'Authors',
-            href: '/authors',
-            icon: <PeopleIcon />,
-        },
-        {
-            title: 'Products',
-            href: '/products',
-            icon: <ShoppingBasketIcon />,
-        },
-        {
-            title: 'Authentication',
-            href: '/sign-in',
-            icon: <LockOpenIcon />,
-        },
-        {
-            title: 'Typography',
-            href: '/typography',
-            icon: <TextFieldsIcon />,
-        },
-        {
-            title: 'Icons',
-            href: '/icons',
-            icon: <ImageIcon />,
-        },
-        {
-            title: 'Account',
-            href: '/account',
-            icon: <AccountBoxIcon />,
-        },
-        {
-            title: 'Settings',
-            href: '/settings',
-            icon: <SettingsIcon />,
-        },
-    ];
-
     return (
         <Drawer
             anchor="left"
@@ -103,7 +64,7 @@ const Sidebar: React.FC<SideBarProps> = (props) => {
             <div {...rest} className={clsx(classes.root, className)}>
                 <Profile />
                 <Divider className={classes.divider} />
-                <SidebarNav className={classes.nav} pages={pages} />
+                <SidebarNav className={classes.nav} pages={PAGES} />
             </div>
         </Drawer>
     );

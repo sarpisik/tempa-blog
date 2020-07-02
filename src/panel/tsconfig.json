@@ -16,6 +16,7 @@
             "@assets/*": ["assets/*"],
             "@common/*": ["../common/*"],
             "@components": ["src/components/index"],
+            "@configs": ["src/configs/index"],
             "@hooks": ["src/hooks/index"],
             "@layouts/*": ["src/layouts/*"],
             "@lib/*": ["src/lib/*"],

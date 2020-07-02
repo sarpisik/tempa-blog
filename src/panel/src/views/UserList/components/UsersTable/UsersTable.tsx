@@ -5,6 +5,9 @@ import { Table, tableIcons, TableProps } from '@components';
 import { useFetchAuthors, useDeleteAuthors } from './hooks';
 import { RouteComponentProps } from 'react-router-dom';
 import { IAuthor } from '@common/entitites';
+import { pages } from '@configs';
+
+const AUTHORS_PATH = pages.find((page) => page.title === 'Authors')?.href || '';
 
 const COLUMNS = [
     { title: 'ID', field: 'id' },
@@ -32,7 +35,8 @@ const UsersTable: React.FC<RouteComponentProps> = ({ history }) => {
         IAuthor
     >['onRowClick'] = React.useCallback(
         (evt, row) => {
-            const authorPath = `/authors/${row.id}`;
+            const authorPath = `${AUTHORS_PATH}/${row.id}`;
+
             history.push(authorPath);
         },
         [history]
