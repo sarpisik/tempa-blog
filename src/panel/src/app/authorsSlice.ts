@@ -15,6 +15,7 @@ const initialState: State = { entities: [] };
 const subscribers = {
     getAuthor: 'GET_AUTHORS',
     postAuthor: 'POST_AUTHOR',
+    deleteAuthors: 'DELETE_AUTHORS',
 } as const;
 
 export const authorsSlice = createSlice({
@@ -23,7 +24,6 @@ export const authorsSlice = createSlice({
     reducers: {
         getAuthorsSuccess(state, action: PayloadAction<IAuthor[]>) {
             state.entities = action.payload;
-            // action.payload.forEach((author) => state.push(author));
         },
         postAuthorSuccess(state, action: PayloadAction<IAuthor>) {
             state.entities.push(action.payload);
@@ -34,17 +34,35 @@ export const authorsSlice = createSlice({
             );
             state.entities[authorIndex] = payload;
         },
+        deleteAuthorsSuccess(
+            state,
+            { payload }: PayloadAction<IAuthor['id'][]>
+        ) {
+            for (let i = 0; i < state.entities.length; i++) {
+                const author = state.entities[i];
+                const isDelete = payload.includes(author.id);
+                if (isDelete) {
+                    state.entities.splice(i, 1);
+                    // Decrement the index variable so it does not skip the next item in the array.
+                    i--;
+                }
+            }
+        },
     },
 });
 
-export const { getAuthorsSuccess, postAuthorSuccess } = authorsSlice.actions;
+export const {
+    getAuthorsSuccess,
+    postAuthorSuccess,
+    deleteAuthorsSuccess,
+} = authorsSlice.actions;
 
 const isError = <T = any>(
     tested: T | { error: string }
 ): tested is { error: string } => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    return Boolean(tested.error);
+    return Boolean(tested?.error);
 };
 
 export const getAuthors = withCatchError<PreAuthor>(
@@ -73,6 +91,23 @@ export const postAuthor = withCatchError<PreAuthor>(
             setSuccess({
                 message: 'Author create success.',
                 subscriber: subscribers.postAuthor,
+            })
+        );
+    }
+);
+
+export const deleteAuthors = withCatchError<IAuthor['id'][]>(
+    subscribers.deleteAuthors,
+    (data) => async (dispatch) => {
+        dispatch(setLoading(subscribers.deleteAuthors));
+
+        await AuthorsApi.deleteAuthors(data);
+
+        dispatch(deleteAuthorsSuccess(data));
+        dispatch(
+            setSuccess({
+                message: 'Author(s) delete success.',
+                subscriber: subscribers.deleteAuthors,
             })
         );
     }

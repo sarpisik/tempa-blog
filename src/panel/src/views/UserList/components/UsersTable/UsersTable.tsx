@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { withRouter } from 'react-router';
 import { Table, tableIcons, TableProps } from '@components';
-import useFetchAuthors from './hooks/useFetchAuthors';
+import { useFetchAuthors, useDeleteAuthors } from './hooks';
 import { RouteComponentProps } from 'react-router-dom';
 import { IAuthor } from '@common/entitites';
 
@@ -15,7 +16,9 @@ const COLUMNS = [
 ];
 
 const UsersTable: React.FC<RouteComponentProps> = ({ history }) => {
-    const [loading, authors] = useFetchAuthors();
+    const [fetchLoading, authors] = useFetchAuthors();
+    const [deleteLoading, deleteAuthors] = useDeleteAuthors();
+    const loading = fetchLoading || deleteLoading;
     const tableData: typeof authors = React.useMemo(
         function memoizeAuthors() {
             // Material-table needs to mutate passed data.
@@ -48,15 +51,10 @@ const UsersTable: React.FC<RouteComponentProps> = ({ history }) => {
             actions={[
                 {
                     tooltip: 'Remove All Selected Users',
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     icon: tableIcons.Delete,
-                    onClick: (evt, data) =>
-                        alert(
-                            'You want to delete ' +
-                                (data as any[]).length +
-                                ' rows'
-                        ),
+                    // @ts-ignore
+                    onClick: deleteAuthors,
                 },
             ]}
         />

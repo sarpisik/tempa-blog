@@ -1,5 +1,5 @@
 import { IAuthor, PreAuthor } from '@common/entitites';
-import { PostRequest, GetRequest } from '@lib/requests';
+import { PostRequest, GetRequest, DeleteRequest } from '@lib/requests';
 
 class AuthorsApi {
     url: string;
@@ -21,6 +21,14 @@ class AuthorsApi {
         });
 
         return postRequest.sendJson<IAuthor>();
+    }
+
+    deleteAuthors(ids: IAuthor['id'][]) {
+        const deleteRequest = new DeleteRequest(this.url, {
+            body: { ids },
+        });
+
+        return deleteRequest.send();
     }
 }
 

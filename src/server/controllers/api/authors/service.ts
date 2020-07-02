@@ -37,4 +37,11 @@ export default class AuthorService {
     async deleteOne(id: string) {
         return this._table.query('DELETE FROM authors WHERE id = $1', [id]);
     }
+    async deleteMany(ids: string[]) {
+        const idList = ids.map((_, i) => `$${i + 1}`).join(',');
+        return this._table.query(
+            `DELETE FROM authors WHERE id IN (${idList})`,
+            ids
+        );
+    }
 }

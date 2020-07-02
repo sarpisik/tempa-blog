@@ -1,4 +1,3 @@
-import { Request, Response } from 'express';
 import { CREATED, OK } from 'http-status-codes';
 
 import Controller, { RouterType } from '@lib/controller';
@@ -21,6 +20,7 @@ export default class AuthorController extends Controller {
     private _initializeRoutes = () => {
         this.router.get(this.path, this._getAuthors);
         this.router.post(this.path, this._createAuthor);
+        this.router.delete(this.path, this._deleteAuthors);
         this.router.put(this.path + '/:id', this._updateAuthor);
         this.router.delete(this.path + '/:id', this._deleteAuthor);
     };
@@ -60,10 +60,20 @@ export default class AuthorController extends Controller {
     );
 
     private _deleteAuthor = withCatch<AuthorParam>(
-        async ({ params: { id } }: Request, res: Response) => {
+        async ({ params: { id } }, res) => {
             if (!id) throw new BadRequestError();
 
             await this._authorService.deleteOne(id);
+
+            res.sendStatus(OK);
+        }
+    );
+
+    private _deleteAuthors = withCatch<any, any, { ids: IAuthor['id'][] }>(
+        async ({ body: { ids } }, res) => {
+            if (!ids) throw new BadRequestError();
+
+            await this._authorService.deleteMany(ids);
 
             res.sendStatus(OK);
         }

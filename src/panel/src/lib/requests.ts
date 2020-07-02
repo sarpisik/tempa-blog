@@ -34,6 +34,8 @@ class RequestJsonHandler extends BaseRequestHandler {
     }
 
     private _parseJson<R extends globalThis.Response>(res: R) {
+        console.log(res);
+
         return res.json();
     }
 
@@ -42,16 +44,36 @@ class RequestJsonHandler extends BaseRequestHandler {
     }
 }
 
+class RequestWithBody extends RequestJsonHandler {
+    constructor(url: string, options: RequestPostOptions = {}) {
+        options.body = JSON.stringify(options.body);
+        // @ts-ignore
+        super(url, options);
+    }
+}
+
 type RequestPostOptions = Omit<RequestInit, 'body'> & {
     body?: Record<string, unknown> | string;
 };
 
-export class PostRequest extends RequestJsonHandler {
+export class PostRequest extends RequestWithBody {
     constructor(url: string, options: RequestPostOptions = {}) {
         options.method = 'post';
-        options.body = JSON.stringify(options.body);
-        // @ts-ignore
+
         super(url, options);
+    }
+}
+
+export class DeleteRequest extends RequestWithBody {
+    constructor(url: string, options: RequestPostOptions = {}) {
+        options.method = 'delete';
+
+        super(url, options);
+    }
+
+    async send() {
+        const response = await super._send();
+        if (response.status !== 200) throw new Error('Delete failed.');
     }
 }
 
@@ -61,6 +83,7 @@ export class GetRequest extends RequestJsonHandler {
         options: ConstructorParameters<typeof RequestJsonHandler>[1] = {}
     ) {
         options.method = 'get';
+
         super(url, options);
     }
 }
