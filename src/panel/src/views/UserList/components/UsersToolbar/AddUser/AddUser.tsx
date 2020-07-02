@@ -11,13 +11,26 @@ import useCloseFormDialog from './useCloseFormDialog';
 const AddUser: React.FC = () => {
     const [loading, dispatch] = useLoading('POST_AUTHOR');
     const closeFormDialog = useCloseFormDialog('POST_AUTHOR');
-    const { errors, getFieldProps, handleSubmit, touched } = useFormik({
+    const {
+        errors,
+        getFieldProps,
+        handleSubmit,
+        touched,
+        resetForm,
+    } = useFormik({
         initialValues,
         validationSchema,
         onSubmit(state) {
             dispatch(postAuthor(state));
         },
     });
+
+    React.useEffect(
+        function resetFormOnSuccess() {
+            closeFormDialog && resetForm();
+        },
+        [closeFormDialog, resetForm]
+    );
 
     return (
         <FormDialog
