@@ -6,7 +6,11 @@ import { RootState } from './store';
 import { withCatchError, setSuccess } from './feedbackSlice';
 import { setLoading } from './loadingSlice';
 
-const initialState: IAuthor[] = [];
+interface State {
+    entities: IAuthor[];
+}
+
+const initialState: State = { entities: [] };
 
 const subscribers = {
     getAuthor: 'GET_AUTHORS',
@@ -18,14 +22,17 @@ export const authorsSlice = createSlice({
     initialState,
     reducers: {
         getAuthorsSuccess(state, action: PayloadAction<IAuthor[]>) {
-            action.payload.forEach((author) => state.push(author));
+            state.entities = action.payload;
+            // action.payload.forEach((author) => state.push(author));
         },
         postAuthorSuccess(state, action: PayloadAction<IAuthor>) {
-            state.push(action.payload);
+            state.entities.push(action.payload);
         },
         putAuthorSuccess(state, { payload }: PayloadAction<IAuthor>) {
-            const authorIndex = state.findIndex((a) => a.id === payload.id);
-            state[authorIndex] = payload;
+            const authorIndex = state.entities.findIndex(
+                (a) => a.id === payload.id
+            );
+            state.entities[authorIndex] = payload;
         },
     },
 });
@@ -71,6 +78,6 @@ export const postAuthor = withCatchError<PreAuthor>(
     }
 );
 
-export const selectAuthors = (state: RootState) => state.authors;
+export const selectAuthors = (state: RootState) => state.authors.entities;
 
 export default authorsSlice.reducer;
