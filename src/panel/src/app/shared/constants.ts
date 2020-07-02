@@ -1,6 +1,8 @@
 export const SUBSCRIBERS = [
     '',
-    'POST_AUTHOR',
     'GET_AUTHORS',
+    'POST_AUTHOR',
+    'PUT_AUTHOR',
+    'DELETE_AUTHOR',
     'DELETE_AUTHORS',
 ] as const;

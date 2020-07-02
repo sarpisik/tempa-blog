@@ -28,7 +28,7 @@ export default class AuthorService {
         { email, name, avatar_url, bio }: Omit<IAuthor, 'id'>
     ) {
         const result = await this._table.query<IAuthor>(
-            'UPDATE authors SET email = $1, name = $2, avatar_url = $3, bio = $4 WHERE id = $4 RETURNING *',
+            'UPDATE authors SET email = $1, name = $2, avatar_url = $3, bio = $4 WHERE id = $5 RETURNING *',
             [email, name, avatar_url, bio, id]
         );
 

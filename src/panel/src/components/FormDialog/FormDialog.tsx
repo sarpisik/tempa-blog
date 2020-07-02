@@ -8,29 +8,7 @@ import {
     DialogContent,
     DialogActions,
 } from '@material-ui/core';
-import Spinner from '../Spinner';
-
-interface LoadingButtonProps extends React.ComponentProps<typeof Button> {
-    loading: boolean;
-}
-
-const LoadingButton: React.FC<LoadingButtonProps> = ({
-    children,
-    loading,
-    ...btnProps
-}) => {
-    return (
-        <Button type="submit" color="primary" disabled={loading} {...btnProps}>
-            {loading ? <Spinner /> : children}
-        </Button>
-    );
-};
-
-LoadingButton.propTypes = {
-    children: PropTypes.node,
-    //@ts-ignore
-    loading: PropTypes.bool,
-};
+import { LoadingButton } from '@components';
 
 interface FormDialogProps {
     buttonContent: React.ReactNode;
@@ -86,7 +64,13 @@ const FormDialog: React.FC<FormDialogProps> = ({
                         <Button onClick={handleClose} color="primary">
                             Close
                         </Button>
-                        <LoadingButton loading={loading}>Save</LoadingButton>
+                        <LoadingButton
+                            type="submit"
+                            color="primary"
+                            loading={loading}
+                        >
+                            Save
+                        </LoadingButton>
                     </DialogActions>
                 </form>
             </Dialog>

@@ -15,6 +15,8 @@ const initialState: State = { entities: [] };
 const subscribers = {
     getAuthor: 'GET_AUTHORS',
     postAuthor: 'POST_AUTHOR',
+    putAuthor: 'PUT_AUTHOR',
+    deleteAuthor: 'DELETE_AUTHOR',
     deleteAuthors: 'DELETE_AUTHORS',
 } as const;
 
@@ -29,10 +31,13 @@ export const authorsSlice = createSlice({
             state.entities.push(action.payload);
         },
         putAuthorSuccess(state, { payload }: PayloadAction<IAuthor>) {
-            const authorIndex = state.entities.findIndex(
-                (a) => a.id === payload.id
-            );
-            state.entities[authorIndex] = payload;
+            for (let author of state.entities) {
+                if (author.id !== payload.id) {
+                    continue;
+                }
+                author = payload;
+                break;
+            }
         },
         deleteAuthorsSuccess(
             state,
@@ -54,6 +59,7 @@ export const authorsSlice = createSlice({
 export const {
     getAuthorsSuccess,
     postAuthorSuccess,
+    putAuthorSuccess,
     deleteAuthorsSuccess,
 } = authorsSlice.actions;
 
@@ -91,6 +97,42 @@ export const postAuthor = withCatchError<PreAuthor>(
             setSuccess({
                 message: 'Author create success.',
                 subscriber: subscribers.postAuthor,
+            })
+        );
+    }
+);
+
+export const putAuthor = withCatchError<IAuthor>(
+    subscribers.putAuthor,
+    (data) => async (dispatch) => {
+        dispatch(setLoading(subscribers.putAuthor));
+
+        const response = await AuthorsApi.putAuthor(data);
+
+        if (isError(response)) throw new Error(response.error);
+
+        dispatch(putAuthorSuccess(response));
+        dispatch(
+            setSuccess({
+                message: 'Author update success.',
+                subscriber: subscribers.putAuthor,
+            })
+        );
+    }
+);
+
+export const deleteAuthor = withCatchError<IAuthor['id']>(
+    subscribers.deleteAuthor,
+    (data) => async (dispatch) => {
+        dispatch(setLoading(subscribers.deleteAuthor));
+
+        await AuthorsApi.deleteAuthor(data);
+
+        dispatch(deleteAuthorsSuccess([data]));
+        dispatch(
+            setSuccess({
+                message: 'Author delete success.',
+                subscriber: subscribers.deleteAuthor,
             })
         );
     }

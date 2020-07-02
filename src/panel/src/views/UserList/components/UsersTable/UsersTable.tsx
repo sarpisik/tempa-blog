@@ -32,7 +32,7 @@ const UsersTable: React.FC<RouteComponentProps> = ({ history }) => {
         IAuthor
     >['onRowClick'] = React.useCallback(
         (evt, row) => {
-            const authorPath = `/users/${row.id}`;
+            const authorPath = `/authors/${row.id}`;
             history.push(authorPath);
         },
         [history]

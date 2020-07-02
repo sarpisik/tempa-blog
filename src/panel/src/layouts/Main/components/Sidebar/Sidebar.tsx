@@ -56,8 +56,8 @@ const Sidebar: React.FC<SideBarProps> = (props) => {
             icon: <DashboardIcon />,
         },
         {
-            title: 'Users',
-            href: '/users',
+            title: 'Authors',
+            href: '/authors',
             icon: <PeopleIcon />,
         },
         {

@@ -31,13 +31,13 @@ const Routes = () => {
                 component={UserListView}
                 exact
                 layout={MainLayout}
-                path="/users"
+                path="/authors"
             />
             <RouteWithLayout
                 component={UserView}
                 exact
                 layout={MainLayout}
-                path="/users/:userId"
+                path="/authors/:userId"
             />
             {/* 
             <RouteWithLayout

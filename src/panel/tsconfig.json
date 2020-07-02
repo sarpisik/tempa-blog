@@ -18,7 +18,8 @@
             "@components": ["src/components/index"],
             "@hooks": ["src/hooks/index"],
             "@layouts/*": ["src/layouts/*"],
-            "@lib/*": ["src/lib/*"]
+            "@lib/*": ["src/lib/*"],
+            "@views/*": ["src/views/*"]
         }
     },
     "include": ["**/*.tsx", "**/*.ts"]

@@ -1,12 +1,15 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
-import { initialValues, validationSchema } from './schema';
+import { AuthorValidationSchema as validationSchema } from '@views/shared';
 import { useFormik } from 'formik';
 import { postAuthor } from '@app/authorsSlice';
 
 import { useLoading } from '@hooks';
 import { FormDialog } from '@components';
 import useCloseFormDialog from './useCloseFormDialog';
+import { PreAuthor } from '@common/entitites';
+
+const initialValues: PreAuthor = { email: '', name: '', bio: '' };
 
 const AddUser: React.FC = () => {
     const [loading, dispatch] = useLoading('POST_AUTHOR');

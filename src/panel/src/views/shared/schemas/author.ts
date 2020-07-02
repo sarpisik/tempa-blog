@@ -1,9 +1,6 @@
 import * as yup from 'yup';
-import { PreAuthor } from '@common/entitites';
 
-export type Values = PreAuthor;
-
-export const validationSchema = yup.object({
+export default yup.object({
     email: yup.string().email('Invalid email.').required('required'),
     name: yup
         .string()
