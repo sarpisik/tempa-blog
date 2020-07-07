@@ -117,7 +117,9 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
 
     const avatarProps = {
         src: resolveAvatarUrl(
-            values.avatar_url.src,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            values.avatar_url.src || values.avatar_url,
             !files[0] // Do not resolve on local image
         ),
         placeholder: initialValues.name,

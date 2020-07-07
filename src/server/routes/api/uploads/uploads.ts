@@ -7,6 +7,9 @@ const toLqip = require('lqip');
 
 import Controller, { RouterType } from '@lib/controller';
 import { withCatch } from '@shared/hofs';
+import { IAuthor } from '@common/entitites';
+
+const MATCH_EXT = /(\.\S+)(?!.*\1)/g;
 
 const storage = multer.diskStorage({
     destination(_req, _file, cb) {
@@ -38,23 +41,55 @@ export default class UploadsController extends Controller {
     };
 
     private _uploadFile = withCatch(async (req, res) => {
-        const tempFilePath = req.file.filename;
-        const src = `uploads/images/${tempFilePath}`;
-        const fileOutput = `${process.cwd()}/${src}`;
-        const { format } = await sharp(req.file.path).toFile(fileOutput);
-        const webp = `${src}.webp`;
-        await sharp(src).toFormat('webp').toFile(fileOutput);
-        const lqip: string = await toLqip(`${src}.${format}`);
-        await promises.unlink(tempFilePath);
+        const src = `uploads/images/${req.file.filename}`;
+        const webp = src.replace(MATCH_EXT, '.webp');
 
-        res.status(CREATED).json({ src, webp, lqip });
+        // Compress temp file
+        await sharp(req.file.path).toFile(`${process.cwd()}/${src}`);
+        // Remove temp file
+        await promises.unlink(req.file.path);
+        // Create webp file
+        await sharp(src).toFormat('webp').toFile(webp);
+        // Create lqip string
+        const lqip: string = await toLqip.base64(src);
+
+        res.status(CREATED).json({ lqip, src, webp });
     });
 
-    private _deleteFiles = withCatch<any, any, { urls: string[] }>(
-        async ({ body: { urls } }, res) => {
-            await Promise.all(urls.map(promises.unlink));
+    private _deleteFiles = withCatch<
+        any,
+        any,
+        { urls: IAuthor['avatar_url'][] }
+    >(async ({ body: { urls } }, res) => {
+        const deletes = await asyncLoop(urls, []);
 
-            res.sendStatus(OK);
+        await Promise.all(deletes);
+
+        res.sendStatus(OK);
+    });
+}
+
+function asyncLoop(urls: IAuthor['avatar_url'][], deletes: Promise<void>[]) {
+    function cb(i: number, resolve: (value?: Promise<void>[]) => void) {
+        if (i < urls.length) {
+            const { src, webp } = urls[i];
+
+            deletes.push(promises.unlink(src));
+            deletes.push(promises.unlink(webp));
+
+            setImmediate(() => {
+                cb(++i, resolve);
+            });
+        } else {
+            resolve(deletes);
         }
-    );
+    }
+
+    return new Promise<Promise<void>[]>((resolve, reject) => {
+        try {
+            cb(0, resolve);
+        } catch (error) {
+            reject(error);
+        }
+    });
 }
