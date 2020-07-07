@@ -7,7 +7,7 @@ import { promises } from 'fs';
 
 const storage = multer.diskStorage({
     destination(_req, _file, cb) {
-        cb(null, 'uploads/images');
+        cb(null, '/tmp');
     },
     filename(_req, file, cb) {
         cb(null, `${Date.now()}_${file.originalname}`);
