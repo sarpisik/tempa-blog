@@ -1,15 +1,10 @@
-import { promises } from 'fs';
-import { CREATED, OK } from 'http-status-codes';
 import multer from 'multer';
-import sharp from 'sharp';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const toLqip = require('lqip');
+import { CREATED, OK } from 'http-status-codes';
 
+import { IAuthor } from '@common/entitites';
 import Controller, { RouterType } from '@lib/controller';
 import { withCatch } from '@shared/hofs';
-import { IAuthor } from '@common/entitites';
-
-const MATCH_EXT = /(\.\S+)(?!.*\1)/g;
+import UploadsService from './service';
 
 const storage = multer.diskStorage({
     destination(_req, _file, cb) {
@@ -22,10 +17,12 @@ const storage = multer.diskStorage({
 
 export default class UploadsController extends Controller {
     private _uploads: ReturnType<typeof multer>;
+    private _uploadsService: UploadsService;
 
     constructor(router: RouterType) {
         super(router, '/api/uploads');
 
+        this._uploadsService = new UploadsService();
         this._uploads = multer({ storage });
 
         this._initializeRoutes();
@@ -40,56 +37,26 @@ export default class UploadsController extends Controller {
         this.router.delete(this.path, this._deleteFiles);
     };
 
-    private _uploadFile = withCatch(async (req, res) => {
-        const src = `uploads/images/${req.file.filename}`;
-        const webp = src.replace(MATCH_EXT, '.webp');
+    private _uploadFile = withCatch(
+        async ({ file: { filename, path } }, res) => {
+            const urls = await this._uploadsService.generateImageFormats(
+                filename,
+                path
+            );
 
-        // Compress temp file
-        await sharp(req.file.path).toFile(`${process.cwd()}/${src}`);
-        // Remove temp file
-        await promises.unlink(req.file.path);
-        // Create webp file
-        await sharp(src).toFormat('webp').toFile(webp);
-        // Create lqip string
-        const lqip: string = await toLqip.base64(src);
-
-        res.status(CREATED).json({ lqip, src, webp });
-    });
+            res.status(CREATED).json(urls);
+        }
+    );
 
     private _deleteFiles = withCatch<
         any,
         any,
         { urls: IAuthor['avatar_url'][] }
     >(async ({ body: { urls } }, res) => {
-        const deletes = await asyncLoop(urls, []);
+        const deletes = await this._uploadsService.asyncLoop(urls, []);
 
         await Promise.all(deletes);
 
         res.sendStatus(OK);
-    });
-}
-
-function asyncLoop(urls: IAuthor['avatar_url'][], deletes: Promise<void>[]) {
-    function cb(i: number, resolve: (value?: Promise<void>[]) => void) {
-        if (i < urls.length) {
-            const { src, webp } = urls[i];
-
-            deletes.push(promises.unlink(src));
-            deletes.push(promises.unlink(webp));
-
-            setImmediate(() => {
-                cb(++i, resolve);
-            });
-        } else {
-            resolve(deletes);
-        }
-    }
-
-    return new Promise<Promise<void>[]>((resolve, reject) => {
-        try {
-            cb(0, resolve);
-        } catch (error) {
-            reject(error);
-        }
     });
 }
