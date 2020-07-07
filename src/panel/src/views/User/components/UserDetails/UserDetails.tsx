@@ -5,7 +5,7 @@ import { Card } from '@material-ui/core';
 
 import { deleteAuthor as dAuthor, putAuthor } from '@app/authorsSlice';
 import { UploadsApi } from '@api';
-import { IAuthor } from '@common/entitites';
+import { IAuthor, ImageFormats } from '@common/entitites';
 
 import { useLoading } from '@hooks';
 import { useFormik } from 'formik';
@@ -46,9 +46,7 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
 
                     const [response] = await Promise.all([
                         // Upload new avatar
-                        UploadsApi.postUpload<{
-                            url: string;
-                        }>(data),
+                        UploadsApi.postUpload<ImageFormats>(data),
 
                         // Delete former avatar
                         UploadsApi.deleteUploads([props.author.avatar_url]),
@@ -61,7 +59,7 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
 
                     // Avatar upload success
                     removeFile();
-                    state.avatar_url = response.url;
+                    state.avatar_url = response;
                 }
 
                 dispatch(putAuthor(state));
@@ -119,7 +117,7 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
 
     const avatarProps = {
         src: resolveAvatarUrl(
-            values.avatar_url,
+            values.avatar_url.src,
             !files[0] // Do not resolve on local image
         ),
         placeholder: initialValues.name,

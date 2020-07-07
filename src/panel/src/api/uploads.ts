@@ -1,4 +1,5 @@
 import { DeleteRequest, PostRequestFile } from '@lib/requests';
+import { ImageFormats } from '@common/entitites';
 
 class UploadsApi {
     private _url: string;
@@ -15,7 +16,7 @@ class UploadsApi {
         return postRequest.send<R>();
     }
 
-    deleteUploads(urls: string[]) {
+    deleteUploads(urls: ImageFormats[]) {
         const deleteRequest = new DeleteRequest(this._url, {
             body: { urls },
         });

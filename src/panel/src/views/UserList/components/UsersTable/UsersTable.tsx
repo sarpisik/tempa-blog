@@ -38,7 +38,7 @@ const COLUMNS = [
         title: 'Name',
         field: 'name',
         render(rowData: IAuthor) {
-            const url = resolveAvatarUrl(rowData.avatar_url);
+            const url = resolveAvatarUrl(rowData.avatar_url.src);
             return <AvatarCell name={rowData.name} url={url} />;
         },
     },

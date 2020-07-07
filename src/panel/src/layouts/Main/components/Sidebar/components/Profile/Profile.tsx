@@ -39,7 +39,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
                 alt="Person"
                 className={classes.avatar}
                 component={RouterLink}
-                src={user?.avatar_url || FALLBACK_AVATAR}
+                src={user?.avatar_url.src || FALLBACK_AVATAR}
                 to="/settings"
             />
             {loading ? (

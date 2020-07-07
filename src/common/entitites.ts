@@ -8,7 +8,7 @@ export interface PreAuthor {
     bio: string;
     avatar_url: ImageFormats;
 }
-interface ImageFormats {
+export interface ImageFormats {
     src: string;
     lqip: string;
     webp: string;

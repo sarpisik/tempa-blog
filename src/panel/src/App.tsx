@@ -23,7 +23,7 @@ export default function App() {
                 id: '12345',
                 name: 'Test user',
                 email: 'test@example.com',
-                avatar_url: '',
+                avatar_url: { src: '', lqip: '', webp: '' },
                 bio: 'Awsome user',
                 created_at: '10.10.2020',
             })

@@ -8,14 +8,14 @@ import { useLoading } from '@hooks';
 import { FormDialog } from '@components';
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone';
 import useCloseFormDialog from './useCloseFormDialog';
-import { PreAuthor } from '@common/entitites';
+import { PreAuthor, ImageFormats } from '@common/entitites';
 import { UploadsApi } from '@api';
 
 const initialValues: PreAuthor = {
     email: '',
     name: '',
     bio: '',
-    avatar_url: '',
+    avatar_url: { src: '', lqip: '', webp: '' },
 };
 
 const AddUser: React.FC = () => {
@@ -34,16 +34,16 @@ const AddUser: React.FC = () => {
                 // Upload avatar first
                 const data = new FormData();
                 data.append('image', files[0].file);
-                const response = await UploadsApi.postUpload<{
-                    url: string;
-                }>(data);
+                const response = await UploadsApi.postUpload<ImageFormats>(
+                    data
+                );
 
                 if ('error' in response)
                     throw new Error(response.error || 'Something went wrong');
 
                 // Avatar upload success
                 removeFile();
-                state.avatar_url = response.url;
+                state.avatar_url = response;
                 dispatch(postAuthor(state));
             } catch (error) {
                 alert('Something went wrong.');

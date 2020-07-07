@@ -11,10 +11,10 @@ export default class AuthorService {
         return result.rows;
     }
     async createOne(
-        email: string,
-        name: string,
-        avatar_url: string,
-        bio: string
+        email: IAuthor['email'],
+        name: IAuthor['name'],
+        avatar_url: IAuthor['avatar_url'],
+        bio: IAuthor['bio']
     ) {
         const result = await this._table.query<IAuthor>(
             'INSERT INTO authors (email, name, avatar_url, bio) VALUES ($1, $2, $3, $4) RETURNING *',
