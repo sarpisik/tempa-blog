@@ -1,1 +1,1 @@
-export { default as UploadsController } from './uploads';
+export { default as UploadsController } from './controller';
