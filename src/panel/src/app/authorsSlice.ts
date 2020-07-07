@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IAuthor, PreAuthor } from '@common/entitites';
-import { AuthorsApi } from '@api';
+import { AuthorsApi, UploadsApi } from '@api';
 
 import { RootState } from './store';
 import { withCatchError, setSuccess } from './feedbackSlice';
@@ -31,23 +31,31 @@ export const authorsSlice = createSlice({
             state.entities.push(action.payload);
         },
         putAuthorSuccess(state, { payload }: PayloadAction<IAuthor>) {
-            for (let author of state.entities) {
-                if (author.id !== payload.id) {
-                    continue;
+            const authors = state.entities;
+
+            for (let i = 0; i < authors.length; i++) {
+                const author = authors[i];
+
+                if (author.id === payload.id) {
+                    authors.splice(i, 1);
+                    break;
                 }
-                author = payload;
-                break;
             }
+
+            authors.push(payload);
         },
         deleteAuthorsSuccess(
             state,
             { payload }: PayloadAction<IAuthor['id'][]>
         ) {
-            for (let i = 0; i < state.entities.length; i++) {
-                const author = state.entities[i];
+            const authors = state.entities;
+
+            for (let i = 0; i < authors.length; i++) {
+                const author = authors[i];
                 const isDelete = payload.includes(author.id);
+
                 if (isDelete) {
-                    state.entities.splice(i, 1);
+                    authors.splice(i, 1);
                     // Decrement the index variable so it does not skip the next item in the array.
                     i--;
                 }
@@ -121,14 +129,17 @@ export const putAuthor = withCatchError<IAuthor>(
     }
 );
 
-export const deleteAuthor = withCatchError<IAuthor['id']>(
+export const deleteAuthor = withCatchError<IAuthor>(
     subscribers.deleteAuthor,
-    (data) => async (dispatch) => {
+    ({ id, avatar_url }) => async (dispatch) => {
         dispatch(setLoading(subscribers.deleteAuthor));
 
-        await AuthorsApi.deleteAuthor(data);
+        await Promise.all([
+            AuthorsApi.deleteAuthor(id),
+            UploadsApi.deleteUploads([avatar_url]),
+        ]);
 
-        dispatch(deleteAuthorsSuccess([data]));
+        dispatch(deleteAuthorsSuccess([id]));
         dispatch(
             setSuccess({
                 message: 'Author delete success.',
@@ -138,14 +149,24 @@ export const deleteAuthor = withCatchError<IAuthor['id']>(
     }
 );
 
-export const deleteAuthors = withCatchError<IAuthor['id'][]>(
+export const deleteAuthors = withCatchError<IAuthor[]>(
     subscribers.deleteAuthors,
-    (data) => async (dispatch) => {
+    (authors) => async (dispatch) => {
         dispatch(setLoading(subscribers.deleteAuthors));
+        const ids: IAuthor['id'][] = [];
+        const urls: IAuthor['avatar_url'][] = [];
 
-        await AuthorsApi.deleteAuthors(data);
+        for (const { id, avatar_url } of authors) {
+            ids.push(id);
+            urls.push(avatar_url);
+        }
 
-        dispatch(deleteAuthorsSuccess(data));
+        await Promise.all([
+            AuthorsApi.deleteAuthors(ids),
+            UploadsApi.deleteUploads(urls),
+        ]);
+
+        dispatch(deleteAuthorsSuccess(ids));
         dispatch(
             setSuccess({
                 message: 'Author(s) delete success.',

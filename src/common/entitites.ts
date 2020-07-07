@@ -2,9 +2,9 @@ export interface PreAuthor {
     name: string;
     email: string;
     bio: string;
+    avatar_url: string;
 }
 export interface IAuthor extends PreAuthor {
     id: string;
-    avatar_url: string;
     created_at: string;
 }

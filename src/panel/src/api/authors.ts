@@ -21,8 +21,7 @@ class AuthorsApi {
 
     postAuthor(author: PreAuthor) {
         const postRequest = new PostRequest(this.url, {
-            // TODO: Set correct avatar url
-            body: { author: { ...author, avatar_url: '' } },
+            body: { author },
         });
 
         return postRequest.sendJson<IAuthor>();

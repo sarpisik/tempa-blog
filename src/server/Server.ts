@@ -53,6 +53,12 @@ export default async function server() {
 
         // Show routes called in console
         app.use(morgan('dev'));
+
+        // Serve multer uploads
+        app.use(
+            '/uploads',
+            express.static(path.resolve(__dirname, '../../uploads'))
+        );
     }
 
     /************************************************************************************

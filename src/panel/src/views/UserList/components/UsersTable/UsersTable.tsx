@@ -6,14 +6,44 @@ import { useFetchAuthors, useDeleteAuthors } from './hooks';
 import { RouteComponentProps } from 'react-router-dom';
 import { IAuthor } from '@common/entitites';
 import { pages } from '@configs';
+import { Avatar, makeStyles, Typography } from '@material-ui/core';
+import { resolveAvatarUrl } from '@views/shared/helpers';
 
 const AUTHORS_PATH = pages.find((page) => page.title === 'Authors')?.href || '';
 
+const useStyles = makeStyles((theme) => ({
+    nameContainer: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    avatar: {
+        marginRight: theme.spacing(2),
+    },
+}));
+
+const AvatarCell: React.FC<{ name: string; url: string }> = ({ name, url }) => {
+    const classes = useStyles();
+    return (
+        <div className={classes.nameContainer}>
+            <Avatar className={classes.avatar} src={url}>
+                {name}
+            </Avatar>
+            <Typography variant="body1">{name}</Typography>
+        </div>
+    );
+};
+
 const COLUMNS = [
+    {
+        title: 'Name',
+        field: 'name',
+        render(rowData: IAuthor) {
+            const url = resolveAvatarUrl(rowData.avatar_url);
+            return <AvatarCell name={rowData.name} url={url} />;
+        },
+    },
     { title: 'ID', field: 'id' },
     { title: 'Email', field: 'email' },
-    { title: 'Name', field: 'name' },
-    { title: 'Avatar', field: 'avatar_url' },
     { title: 'Bio', field: 'bio' },
     { title: 'Created At', field: 'created_at' },
 ];

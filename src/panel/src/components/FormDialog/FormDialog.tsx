@@ -16,15 +16,17 @@ interface FormDialogProps {
     loading: boolean;
     onSubmit: any;
     close: boolean;
+    formDisabled: boolean;
 }
 
 const FormDialog: React.FC<FormDialogProps> = ({
     buttonContent,
-    dialogTitle,
-    loading,
-    onSubmit,
     children,
     close,
+    dialogTitle,
+    formDisabled,
+    loading,
+    onSubmit,
 }) => {
     const [open, setOpen] = React.useState(false);
 
@@ -68,6 +70,7 @@ const FormDialog: React.FC<FormDialogProps> = ({
                             type="submit"
                             color="primary"
                             loading={loading}
+                            disabled={formDisabled}
                         >
                             Save
                         </LoadingButton>

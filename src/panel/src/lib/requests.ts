@@ -17,6 +17,38 @@ class BaseRequestHandler {
     protected _send() {
         return fetch(this._generateUrl(), this._options);
     }
+
+    protected _parseJson<R extends globalThis.Response>(res: R) {
+        return res.json();
+    }
+}
+
+class RequestFileHandler extends BaseRequestHandler {
+    constructor(
+        url: string,
+        options: ConstructorParameters<typeof BaseRequestHandler>[1] = {}
+    ) {
+        options.headers = options?.headers || {};
+        // @ts-ignore
+        options.headers['Accept'] = 'application/json';
+        // @ts-ignore
+        // options.headers['Content-Type'] = 'multipart/form-data';
+
+        super(url, options);
+    }
+    send<R>() {
+        return super._send().then<R | { error: string }>(super._parseJson);
+    }
+}
+
+export class PostRequestFile extends RequestFileHandler {
+    constructor(
+        url: string,
+        options: ConstructorParameters<typeof RequestFileHandler>[1] = {}
+    ) {
+        options.method = 'post';
+        super(url, options);
+    }
 }
 
 class RequestJsonHandler extends BaseRequestHandler {
@@ -33,12 +65,8 @@ class RequestJsonHandler extends BaseRequestHandler {
         super(url, options);
     }
 
-    private _parseJson<R extends globalThis.Response>(res: R) {
-        return res.json();
-    }
-
     sendJson<R>() {
-        return super._send().then<R | { error: string }>(this._parseJson);
+        return super._send().then<R | { error: string }>(super._parseJson);
     }
 }
 
@@ -53,7 +81,7 @@ class RequestWithBody extends RequestJsonHandler {
 }
 
 type RequestPostOptions = Omit<RequestInit, 'body'> & {
-    body?: Record<string, unknown> | string;
+    body?: Record<string, unknown> | string | FormData;
 };
 
 export class GetRequest extends RequestJsonHandler {

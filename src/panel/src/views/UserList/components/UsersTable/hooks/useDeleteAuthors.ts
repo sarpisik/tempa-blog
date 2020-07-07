@@ -3,16 +3,11 @@ import { useLoading } from '@hooks';
 import { IAuthor } from '@common/entitites';
 import { deleteAuthors as dAuthors } from '@app/authorsSlice';
 
-function outIds({ id }: IAuthor) {
-    return id;
-}
-
 export default function useDeleteAuthors() {
     const [loading, dispatch] = useLoading('DELETE_AUTHORS');
     const deleteAuthors = useCallback(
         function deleteAuthors<T>(_evt: T, authors: IAuthor[]) {
-            const ids = authors.map(outIds);
-            dispatch(dAuthors(ids));
+            dispatch(dAuthors(authors));
         },
 
         // skip dep static dispatch

@@ -85,5 +85,5 @@ yarn-error.log
 # Webhook on remote
 deploy.sh
 
-# Experimental
-experimental.js
+# assets
+uploads/images
