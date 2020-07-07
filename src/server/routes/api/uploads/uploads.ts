@@ -1,9 +1,12 @@
-import multer from 'multer';
+import { promises } from 'fs';
 import { CREATED, OK } from 'http-status-codes';
+import multer from 'multer';
+import sharp from 'sharp';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const toLqip = require('lqip');
 
 import Controller, { RouterType } from '@lib/controller';
 import { withCatch } from '@shared/hofs';
-import { promises } from 'fs';
 
 const storage = multer.diskStorage({
     destination(_req, _file, cb) {
@@ -35,9 +38,16 @@ export default class UploadsController extends Controller {
     };
 
     private _uploadFile = withCatch(async (req, res) => {
-        const url = req.file.path;
+        const tempFilePath = req.file.filename;
+        const src = `uploads/images/${tempFilePath}`;
+        const fileOutput = `${process.cwd()}/${src}`;
+        const { format } = await sharp(req.file.path).toFile(fileOutput);
+        const webp = `${src}.webp`;
+        await sharp(src).toFormat('webp').toFile(fileOutput);
+        const lqip: string = await toLqip(`${src}.${format}`);
+        await promises.unlink(tempFilePath);
 
-        res.status(CREATED).json({ url });
+        res.status(CREATED).json({ src, webp, lqip });
     });
 
     private _deleteFiles = withCatch<any, any, { urls: string[] }>(
