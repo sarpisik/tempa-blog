@@ -37,7 +37,7 @@
         "@lib": "dist/server/lib",
         "@db": "dist/server/db",
         "@shared": "dist/server/shared",
-        "@api": "dist/server/controllers/api",
+        "@api": "dist/server/routes/api",
         "@server": "dist/server/Server"
     },
     "husky": {

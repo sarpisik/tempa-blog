@@ -18,7 +18,7 @@
             "@lib/*": ["lib/*"],
             "@shared/*": ["shared/*"],
             "@common/*": ["../common/*"],
-            "@api/*": ["controllers/api/*"],
+            "@api/*": ["routes/api/*"],
             "@server": ["Server"],
             "@db/*": ["db/*"]
         },

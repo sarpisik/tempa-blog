@@ -1,7 +1,7 @@
 import generateApiControllers from './api';
 import { pageControllers } from './pages';
 
-export default function controllers(
+export default function routes(
     db: Parameters<typeof generateApiControllers>[0]
 ) {
     const apiControllers = generateApiControllers(db);

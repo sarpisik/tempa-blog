@@ -9,7 +9,7 @@ import expressStaticGzip from 'express-static-gzip';
 import { BAD_REQUEST } from 'http-status-codes';
 import 'express-async-errors';
 
-import controllers from './controllers';
+import routes from './routes';
 import logger from '@shared/Logger';
 import { CustomError } from '@shared/error';
 import database from './db/database';
@@ -104,11 +104,11 @@ export default async function server() {
     });
 
     /************************************************************************************
-     *                              Serve controllers
+     *                              Serve routes
      ***********************************************************************************/
 
-    controllers(db).forEach((controller) => {
-        app.use('/', controller.router);
+    routes(db).forEach((route) => {
+        app.use('/', route.router);
     });
 
     // Print API errors
