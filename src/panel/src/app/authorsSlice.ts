@@ -123,12 +123,31 @@ export const postAuthor = withCatchError<PrePostAuthor>(
     }
 );
 
-export const putAuthor = withCatchError<IAuthor>(
+export interface PrePutAuthor extends IAuthor {
+    avatar: FormData | null;
+}
+
+export const putAuthor = withCatchError<PrePutAuthor>(
     subscribers.putAuthor,
-    (data) => async (dispatch) => {
+    ({ avatar, ...preAuthor }) => async (dispatch) => {
         dispatch(setLoading(subscribers.putAuthor));
 
-        const response = await AuthorsApi.putAuthor(data);
+        if (avatar) {
+            // Delete former avatar
+            await UploadsApi.deleteUploads([preAuthor.avatar_url]);
+
+            // Upload new avatar
+            const response = await UploadsApi.postUpload<IAuthor['avatar_url']>(
+                avatar
+            );
+
+            if (isError(response)) throw new Error(response.error);
+
+            // New avatar upload success
+            preAuthor.avatar_url = response;
+        }
+
+        const response = await AuthorsApi.putAuthor(preAuthor);
 
         if (isError(response)) throw new Error(response.error);
 

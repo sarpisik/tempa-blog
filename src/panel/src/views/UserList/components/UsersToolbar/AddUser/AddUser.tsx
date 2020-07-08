@@ -7,8 +7,8 @@ import { postAuthor } from '@app/authorsSlice';
 import { useLoading } from '@hooks';
 import { FormDialog } from '@components';
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone';
-import useCloseFormDialog from './useCloseFormDialog';
 import { PreAuthor } from '@common/entitites';
+import { useRequestFeedback } from '@views/shared/hooks';
 
 const initialValues: PreAuthor = {
     email: '',
@@ -19,7 +19,7 @@ const initialValues: PreAuthor = {
 
 const AddUser: React.FC = () => {
     const [loading, dispatch] = useLoading('POST_AUTHOR');
-    const closeFormDialog = useCloseFormDialog('POST_AUTHOR');
+    const closeFormDialog = useRequestFeedback('SUCCESS', 'POST_AUTHOR');
     const [files, setFiles] = React.useState<FileObject[]>([]);
     const removeFile = React.useCallback(function removeField<File>(
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,7 +116,6 @@ const AddUser: React.FC = () => {
                 showPreviews
                 showPreviewsInDropzone={false}
             />
-            {}
         </FormDialog>
     );
 };

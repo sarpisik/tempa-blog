@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 
 import { Card } from '@material-ui/core';
 
-import { deleteAuthor as dAuthor, putAuthor } from '@app/authorsSlice';
-import { UploadsApi } from '@api';
-import { IAuthor, ImageFormats } from '@common/entitites';
+import {
+    deleteAuthor as dAuthor,
+    putAuthor,
+    PrePutAuthor,
+} from '@app/authorsSlice';
+import { IAuthor } from '@common/entitites';
 
 import { useLoading } from '@hooks';
 import { useFormik } from 'formik';
@@ -13,6 +16,7 @@ import { Form, useDropzone } from './components';
 
 import { AuthorValidationSchema as validationSchema } from '@views/shared';
 import { resolveAvatarUrl } from '@views/shared/helpers';
+import { useRequestFeedback } from '@views/shared/hooks';
 
 const INPUT_FIELDS = ['name', 'email', 'bio'] as const;
 
@@ -24,6 +28,7 @@ interface UserDetailsProps extends React.ComponentProps<typeof Card> {
 
 const UserDetails: React.FC<UserDetailsProps> = (props) => {
     const { author: initialValues } = props;
+    const updateSuccess = useRequestFeedback('SUCCESS', 'PUT_AUTHOR');
     const [loading, dispatch] = useLoading('PUT_AUTHOR');
     const [deleteLoading] = useLoading('DELETE_AUTHOR');
     const {
@@ -36,41 +41,25 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
     } = useDropzone();
 
     const onSubmit = React.useCallback(
-        async function onSubmit(state: IAuthor) {
-            try {
-                // If avatar changed, upload it first
-                const avatar = files[0];
-                if (avatar) {
-                    const data = new FormData();
-                    data.append('image', avatar.file);
+        function onSubmit(state: IAuthor) {
+            const preAuthor: PrePutAuthor = { ...state, avatar: null };
+            const image = files[0];
 
-                    const [response] = await Promise.all([
-                        // Upload new avatar
-                        UploadsApi.postUpload<ImageFormats>(data),
+            // Lift the new avatar to reducer If avatar changed.
+            if (image) {
+                preAuthor.avatar = new FormData();
+                preAuthor.avatar.append('image', image.file);
 
-                        // Delete former avatar
-                        UploadsApi.deleteUploads([props.author.avatar_url]),
-                    ]);
-
-                    if ('error' in response)
-                        throw new Error(
-                            response.error || 'Something went wrong'
-                        );
-
-                    // Avatar upload success
-                    removeFile();
-                    state.avatar_url = response;
-                }
-
-                dispatch(putAuthor(state));
-            } catch (error) {
-                alert('Something went wrong.');
-                console.error(error);
+                // avatar_url been overwritten by setAvatarField.
+                // So we pass back the original in order to make delete req.
+                preAuthor.avatar_url = props.author.avatar_url;
             }
+
+            dispatch(putAuthor(preAuthor));
         },
-        // skip deps dispatch,removeFile
+        // skip dep dispatch
         // eslint-disable-next-line react-hooks/exhaustive-deps
-        [files, props.author.avatar_url]
+        [files]
     );
 
     const {
@@ -113,6 +102,20 @@ const UserDetails: React.FC<UserDetailsProps> = (props) => {
         // skip dep dispatch
         // eslint-disable-next-line react-hooks/exhaustive-deps
         [props.author]
+    );
+
+    React.useEffect(
+        function removeCachedImageOnUpdateSuccess() {
+            if (updateSuccess) {
+                // Remove local cached file
+                removeFile();
+                // Save uploaded file to local form state
+                setFieldValue('avatar_url', props.author.avatar_url);
+            }
+        },
+        // skip deps removeFile, setFieldValue
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [props.author.avatar_url, updateSuccess]
     );
 
     const avatarProps = {
