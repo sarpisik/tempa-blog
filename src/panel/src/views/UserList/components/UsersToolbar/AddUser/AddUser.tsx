@@ -8,8 +8,7 @@ import { useLoading } from '@hooks';
 import { FormDialog } from '@components';
 import { DropzoneAreaBase, FileObject } from 'material-ui-dropzone';
 import useCloseFormDialog from './useCloseFormDialog';
-import { PreAuthor, ImageFormats } from '@common/entitites';
-import { UploadsApi } from '@api';
+import { PreAuthor } from '@common/entitites';
 
 const initialValues: PreAuthor = {
     email: '',
@@ -29,26 +28,11 @@ const AddUser: React.FC = () => {
         setFiles([]);
     }, []);
     const onSubmit = React.useCallback(
-        async function onSubmit(state: PreAuthor) {
-            try {
-                // Upload avatar first
-                const data = new FormData();
-                data.append('image', files[0].file);
-                const response = await UploadsApi.postUpload<ImageFormats>(
-                    data
-                );
+        function onSubmit(state: PreAuthor) {
+            const avatar = new FormData();
+            avatar.append('image', files[0].file);
 
-                if ('error' in response)
-                    throw new Error(response.error || 'Something went wrong');
-
-                // Avatar upload success
-                removeFile();
-                state.avatar_url = response;
-                dispatch(postAuthor(state));
-            } catch (error) {
-                alert('Something went wrong.');
-                console.error(error);
-            }
+            dispatch(postAuthor({ ...state, avatar }));
         },
         // skip dep dispatch
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,8 +52,13 @@ const AddUser: React.FC = () => {
 
     React.useEffect(
         function resetFormOnSuccess() {
-            closeFormDialog && resetForm();
+            if (closeFormDialog) {
+                resetForm();
+                removeFile();
+            }
         },
+        // skip dep removeFile
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [closeFormDialog, resetForm]
     );
 

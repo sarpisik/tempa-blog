@@ -79,7 +79,7 @@ const isError = <T = any>(
     return Boolean(tested?.error);
 };
 
-export const getAuthors = withCatchError<PreAuthor>(
+export const getAuthors = withCatchError<PrePostAuthor>(
     subscribers.getAuthor,
     () => async (dispatch) => {
         dispatch(setLoading(subscribers.getAuthor));
@@ -91,12 +91,25 @@ export const getAuthors = withCatchError<PreAuthor>(
     }
 );
 
-export const postAuthor = withCatchError<PreAuthor>(
+export interface PrePostAuthor extends PreAuthor {
+    avatar: FormData;
+}
+
+export const postAuthor = withCatchError<PrePostAuthor>(
     subscribers.postAuthor,
-    (data) => async (dispatch) => {
+    ({ avatar, ...preAuthor }) => async (dispatch) => {
         dispatch(setLoading(subscribers.postAuthor));
 
-        const response = await AuthorsApi.postAuthor(data);
+        // Upload avatar first
+        const avatarUrls = await UploadsApi.postUpload<IAuthor['avatar_url']>(
+            avatar
+        );
+
+        if (isError(avatarUrls)) throw new Error(avatarUrls.error);
+
+        preAuthor.avatar_url = avatarUrls;
+
+        const response = await AuthorsApi.postAuthor(preAuthor);
 
         if (isError(response)) throw new Error(response.error);
 
