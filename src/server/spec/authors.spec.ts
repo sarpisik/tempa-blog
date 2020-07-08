@@ -34,7 +34,7 @@ describe('Authors Routes', () => {
                 id: '12345',
                 email: 'test@example.com',
                 name: 'Test Author',
-                avatar_url: 'test-url',
+                avatar_url: { src: '', webp: '', lqip: '' },
                 bio: 'This is a test bio.',
                 created_at: 'some time zone',
             },
@@ -74,7 +74,7 @@ describe('Authors Routes', () => {
             author: {
                 email: 'test@example.com',
                 name: 'Test Author',
-                avatar_url: 'test-url',
+                avatar_url: { src: '', webp: '', lqip: '' },
                 bio: 'This is a test bio.',
             },
         };
@@ -93,7 +93,7 @@ describe('Authors Routes', () => {
                 pErr(err);
                 expect(res.status).toBe(CREATED);
                 keys.forEach((key) => {
-                    expect(body.author[key]).toBe(res.body[key]);
+                    expect(body.author[key]).toEqual(res.body[key]);
                 });
                 expect(res.body.error).toBeUndefined();
                 done();
@@ -134,7 +134,7 @@ describe('Authors Routes', () => {
                 id: '12345',
                 email: 'test@example.com',
                 name: 'Test Author',
-                avatar_url: 'test-url',
+                avatar_url: { src: '', webp: '', lqip: '' },
                 bio: 'This is a test bio.',
                 created_at: 'some time zone',
             },

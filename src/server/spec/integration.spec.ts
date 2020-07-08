@@ -33,7 +33,11 @@ describe('Application', () => {
         author = {
             email: 'test@example.com',
             name: 'John DOE',
-            avatar_url: 'http://avatrs.com/john-doe',
+            avatar_url: {
+                src: 'http://avatrs.com/john-doe',
+                webp: 'http://avatrs.com/john-doe',
+                lqip: 'http://avatrs.com/john-doe',
+            },
             bio: 'Awsome blogger.',
         }
     ) => ({ author });
@@ -86,16 +90,20 @@ describe('Application', () => {
                 const updateBody = generateAuthorBody({
                     email: 'test@example.com',
                     name: 'Jane WRITER',
-                    avatar_url: 'http://avatrs.com/jane-writer',
+                    avatar_url: {
+                        src: 'http://avatrs.com/jane-writer',
+                        webp: 'http://avatrs.com/jane-writer',
+                        lqip: 'http://avatrs.com/jane-writer',
+                    },
                     bio: 'Awsome blogger.',
                 });
                 api.put(
                     dynamicPath(authorIdPath, res.body.id),
                     updateBody
                 ).then((res) => {
-                    const { id, name, avatar_url, bio } = res.body;
+                    const { id, name, email, avatar_url, bio } = res.body;
                     expect(res.status).toBe(OK);
-                    expect({ name, avatar_url, bio }).toEqual(
+                    expect({ name, email, avatar_url, bio }).toEqual(
                         updateBody.author
                     );
                     expect(res.body.error).toBeUndefined();
