@@ -14,7 +14,7 @@
         "dev:panel": "webpack-dev-server --config ./src/panel/webpack.config.js",
         "format": "prettier --write 'src/**/*.ts'",
         "check": "prettier --check 'src/**.ts'",
-        "test": "nyc --reporter=html ts-node -r tsconfig-paths/register ./spec --env=testing",
+        "test": "nyc --reporter=html ts-node -r tsconfig-paths/register ./src/server/spec --env=testing",
         "test:watch": "nodemon --config ./spec/nodemon.json"
     },
     "nodemonConfig": {
